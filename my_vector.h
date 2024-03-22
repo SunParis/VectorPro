@@ -1,5 +1,3 @@
-# include <system_error>
-
 # ifdef _WIN64
     typedef unsigned long long size_t;
 # elif defined __SIZE_TYPE__
@@ -30,7 +28,7 @@ int ___rand() {
 int ___layernumgenerate() {
     int layer = 1;
     int base = 4;
-    if (___rand() % 16 == 0)  layer++;
+    if (___rand() % (base * base) == 0)  layer++;
     else return layer;
     while (1) {
         if (___rand() % base == 0)  layer++;
@@ -52,9 +50,9 @@ void memcopy(const char *in, char *out, size_t n) {
 typedef struct ____node ____node;
 typedef ____node* ____node_ptr;
 struct ____node {
-    int key[_MAX_LAYER_];
     char *data;
     int nextlen;
+    int key[_MAX_LAYER_];
     ____node_ptr next[_MAX_LAYER_];
 };
 
@@ -63,9 +61,9 @@ private:
     size_t len = 0;
     size_t data_size = 0;
     ____node head;
-    ____node_ptr tail = &(this->head);
+    ____node_ptr tail;
 private:
-    ____node_ptr newnode(void *data = null) {
+    ____node_ptr newnode(void *data) {
         ____node_ptr newptr = new ____node;
         char *newdata = new char[data_size];
         memcopy((char *)data, newdata, data_size);
@@ -85,6 +83,7 @@ private:
             delete tmp;
         }
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
+        this->tail = &(this->head);
     }  
 public:
     fakeskiplist(size_t data_size) {
@@ -93,6 +92,7 @@ public:
         this->head.nextlen = _MAX_LAYER_;
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.key[i] = -1;
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
+        this->tail = &(this->head);
     }
     ~fakeskiplist() {
         this->Destroyall();
@@ -103,27 +103,28 @@ public:
     size_t insert(void *data, size_t after_key) {
         ____node_ptr newptr = this->newnode(data);
         ____node_ptr curr = &(this->head);
-        ____node_ptr updatelist[_MAX_LAYER_];
-        ____node_ptr *reclist = null;
+        ____node_ptr next_update_list[_MAX_LAYER_];
+        ____node_ptr *prev_rec_list = null;
         int *keyrec = null;
-        for (int i = 0; i < _MAX_LAYER_; i++) updatelist[i] = null;
+        for (int i = 0; i < _MAX_LAYER_; i++) next_update_list[i] = null;
         int add_key_flag = (newptr->nextlen > 1 ? 1 : 0);
         size_t count = -1;
         int curr_layer = _MAX_LAYER_ - 1;
         if (add_key_flag == 1) {
-            reclist = new ____node_ptr[_MAX_LAYER_];
+            prev_rec_list = new ____node_ptr[_MAX_LAYER_];
             keyrec = new int[_MAX_LAYER_];
             for (int i = 0; i < _MAX_LAYER_; i++) keyrec[i] = 0;
-            for (int i = 0; i < _MAX_LAYER_; i++) reclist[i] = null;
+            for (int i = 0; i < _MAX_LAYER_; i++) prev_rec_list[i] = null;
         }
         while (count != after_key) {
             while (curr->next[curr_layer] == null && curr_layer != 0) {
-                if (reclist != null)    reclist[curr_layer] = curr;
+                if (prev_rec_list != null)    prev_rec_list[curr_layer] = curr;
                 curr_layer--;
             }
             if (curr_layer == 0)    break;
             while (curr->next[curr_layer]->key[curr_layer] + count > after_key && curr_layer != 0) {
-                updatelist[curr_layer] = curr->next[curr_layer];
+                next_update_list[curr_layer] = curr->next[curr_layer];
+                if (prev_rec_list != null)    prev_rec_list[curr_layer] = curr;
                 curr_layer--;
             }
             if (curr_layer == 0)    break;
@@ -131,19 +132,19 @@ public:
             curr = curr->next[curr_layer];
             if (keyrec != null) keyrec[curr_layer] += curr->key[curr_layer];
         }
-        if (curr_layer == 0) {
+        if (count == after_key) {
+            for (int i = curr_layer; i > 0; i++) {
+                next_update_list[i] = curr->next[i];
+                if (prev_rec_list != null) {
+                    prev_rec_list[i] = curr;
+                }
+            } 
+        }
+        else if (curr_layer == 0) {
             for (auto i = count; i < after_key; i++) {
                 curr = curr->next[0];
                 if (keyrec != null) keyrec[0]++;
             }
-        }
-        else {
-            for (int i = curr_layer; i > 0; i++) {
-                updatelist[i] = curr->next[i];
-                if (reclist != null) {
-                    reclist[i] = curr;
-                }
-            } 
         }
         if (keyrec != null) keyrec[0]++;
 
@@ -151,20 +152,24 @@ public:
         curr->next[0] = newptr;
         if (add_key_flag == 0) {
             for (int i = _MAX_LAYER_ - 1; i > 0; i--) {
-                if (updatelist[i] != null)  updatelist[i]->key[i]++;
+                if (next_update_list[i] != null)  next_update_list[i]->key[i]++;
             }
         }
         else {
             ____node_ptr tmp = null;
             for (int i = 1; i <= newptr->nextlen - 1; i++) {
                 newptr->key[i] = newptr->key[i-1] + keyrec[i];
-                if (reclist[i] != null) reclist[i]->next[i] = newptr;
-                if (updatelist[i] != null)  updatelist[i]->key[i] += (1 - newptr->key[i]);
+                if (prev_rec_list[i] != null) prev_rec_list[i]->next[i] = newptr;
+                if (next_update_list[i] != null)  next_update_list[i]->key[i] += (1 - newptr->key[i]);
             }
             for (int i = newptr->nextlen; i <= _MAX_LAYER_ - 1; i++) {
-                if (updatelist[i] != null)  updatelist[i]->key[i] += 1;
+                if (next_update_list[i] != null)  next_update_list[i]->key[i] += 1;
             }
         }
+        if (after_key == this->len - 1) this->tail = newptr;
+        delete [] prev_rec_list;
+        delete keyrec;
+        this->len++;
         return after_key + 1;
     }
 };
