@@ -1,7 +1,7 @@
 # Prerequisites
 *.d
 tmp.*
-test*
+test
 
 # Compiled Object files
 *.slo
