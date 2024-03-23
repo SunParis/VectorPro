@@ -2,6 +2,7 @@
 *.d
 tmp.*
 test
+*.png
 
 # Compiled Object files
 *.slo
