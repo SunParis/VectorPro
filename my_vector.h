@@ -1,3 +1,5 @@
+/*# include <iostream>
+# include <stdlib.h>*/
 # ifdef _WIN64
     typedef unsigned long long size_t;
 # elif defined __SIZE_TYPE__
@@ -18,6 +20,7 @@
 
 unsigned long long ____SEED = 12345; 
 int ___rand() {
+    // return rand();
     const unsigned long long a = 1664525;
     const unsigned long long c = 1013904223;
     const unsigned long long m = 4294967296; 
@@ -27,7 +30,7 @@ int ___rand() {
 
 int ___layernumgenerate() {
     int layer = 1;
-    int base = 4;
+    int base = 4;//2;
     if (___rand() % (base * base) == 0)  layer++;
     else return layer;
     while (1) {
@@ -73,18 +76,6 @@ private:
         for (int i = 0; i < _MAX_LAYER_; i++) newptr->key[i] = 0;
         return newptr;
     }
-    void Destroyall() {
-        ____node_ptr curr = this->head.next[0];
-        ____node_ptr tmp;
-        while (curr != null) {
-            tmp = curr;
-            curr = curr->next[0];
-            delete [] tmp->data;
-            delete tmp;
-        }
-        for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
-        this->tail = &(this->head);
-    }  
 public:
     fakeskiplist(size_t data_size) {
         this->data_size = data_size;
@@ -101,6 +92,7 @@ public:
         return this->len;
     }
     size_t insert(void *data, size_t after_key) {
+        if (after_key >= this->length() && after_key != -1)    return -1;
         ____node_ptr newptr = this->newnode(data);
         ____node_ptr curr = &(this->head);
         ____node_ptr next_update_list[_MAX_LAYER_];
@@ -132,8 +124,11 @@ public:
             curr = curr->next[curr_layer];
             if (keyrec != null) keyrec[curr_layer] += curr->key[curr_layer];
         }
+        /*std::cout << "curr_layer:::         " << curr_layer;
+        if (curr->next[1] == null)  std::cout << "---XXX" << std::endl;
+        else  std::cout << std::endl;*/
         if (count == after_key) {
-            for (int i = curr_layer; i > 0; i++) {
+            for (int i = curr_layer; i >= 0; i--) {
                 next_update_list[i] = curr->next[i];
                 if (prev_rec_list != null) {
                     prev_rec_list[i] = curr;
@@ -141,9 +136,10 @@ public:
             } 
         }
         else if (curr_layer == 0) {
-            for (auto i = count; i < after_key; i++) {
+            while (count != after_key) {
                 curr = curr->next[0];
                 if (keyrec != null) keyrec[0]++;
+                count++;
             }
         }
         if (keyrec != null) keyrec[0]++;
@@ -157,21 +153,75 @@ public:
         }
         else {
             ____node_ptr tmp = null;
-            for (int i = 1; i <= newptr->nextlen - 1; i++) {
-                newptr->key[i] = newptr->key[i-1] + keyrec[i];
-                if (prev_rec_list[i] != null) prev_rec_list[i]->next[i] = newptr;
-                if (next_update_list[i] != null)  next_update_list[i]->key[i] += (1 - newptr->key[i]);
-            }
-            for (int i = newptr->nextlen; i <= _MAX_LAYER_ - 1; i++) {
-                if (next_update_list[i] != null)  next_update_list[i]->key[i] += 1;
+            int delta = after_key + 2;
+            for (int i = _MAX_LAYER_ - 1; i > 0; i--) {
+                delta -= keyrec[i];
+                if (i < newptr->nextlen) {
+                    newptr->key[i] = delta;
+                    newptr->next[i] = next_update_list[i];
+                    if (prev_rec_list[i] != null) prev_rec_list[i]->next[i] = newptr;
+                    if (next_update_list[i] != null)  next_update_list[i]->key[i] += (1 - newptr->key[i]);
+                }
             }
         }
+
+        /*if (keyrec != null) {
+            std::cout << "keyrec:::             ";
+            for (int i = 0; i < _MAX_LAYER_; i++) {
+                std::cout << keyrec[i] << "|||";
+            }
+            std::cout << std::endl;
+        }
+        if (prev_rec_list != null) {
+            std::cout << "prev_rec_list:::      ";
+            for (int i = 0; i < _MAX_LAYER_; i++) {
+                if (prev_rec_list[i] == null)   std::cout << " " << "|||";
+                else    std::cout << prev_rec_list[i]->key[i] << "|||";
+            }
+            std::cout << std::endl;
+        }
+        if (next_update_list != null) {
+            std::cout << "next_update_list:::   ";
+            for (int i = 0; i < _MAX_LAYER_; i++) {
+                if (next_update_list[i] == null)   std::cout << " " << "|||";
+                else    std::cout << next_update_list[i]->key[i] << "|||";
+            }
+            std::cout << std::endl;
+        }*/
+
         if (after_key == this->len - 1) this->tail = newptr;
         delete [] prev_rec_list;
-        delete keyrec;
+        delete [] keyrec;
         this->len++;
         return after_key + 1;
     }
+    void Destroyall() {
+        ____node_ptr curr = this->head.next[0];
+        ____node_ptr tmp;
+        while (curr != null) {
+            tmp = curr;
+            curr = curr->next[0];
+            delete [] tmp->data;
+            delete tmp;
+        }
+        for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
+        this->tail = &(this->head);
+    }
+    /*void show() {
+        std::cout << "=========================================" << std::endl;
+        ____node_ptr curr = this->head.next[0];
+        for (int i = 0; i < this->length(); i++) {
+            std::cout << i << "::: ";
+            for (int i = 0; i < _MAX_LAYER_; i++) {
+                std::cout << curr->key[i];
+                if (i == curr->nextlen - 1) std::cout << "|||";
+                else    std::cout << "---";
+            }
+            std::cout << std::endl;
+            curr = curr->next[0];
+        }
+        std::cout << "=========================================" << std::endl;
+    }*/
 };
 
 # endif

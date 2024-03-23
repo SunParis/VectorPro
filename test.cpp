@@ -1,11 +1,26 @@
 # include <iostream>
-# include <vector>
+# include "my_vector.h"
 
 using namespace std;
 int main() {
-    size_t a = -1;
-    int b = 10;
-    a += b;
-    cout << a << endl;
+    int data = 0;
+    int input = -1;
+    fakeskiplist test(sizeof(int));
+    /*test.insert(&data, -1);
+    data++;
+    test.insert(&data, -1);
+    data++;
+    test.insert(&data, -1);
+    data++;
+    test.show();
+    cin >> input;
+    while (input > -2 && input < (int)test.length()) {
+        test.insert(&data, input);
+        data++;
+        test.show();
+        cin >> input;
+    }
+    cout << input << endl;*/
+    test.Destroyall();
     return 0;
 }

@@ -55,6 +55,7 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "cinttypes": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "sstream": "cpp"
     }
 }
