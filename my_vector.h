@@ -1,5 +1,9 @@
-/*# include <iostream>
-# include <stdlib.h>*/
+# ifndef _MY_SKIPLIST_
+# define _MY_SKIPLIST_
+# define DEBUG
+# ifdef DEBUG
+# include <iostream>
+# endif
 # ifdef _WIN64
     typedef unsigned long long size_t;
 # elif defined __SIZE_TYPE__
@@ -12,42 +16,8 @@
 # define null 0
 # endif
 
-
-# ifndef _MY_SKIPLIST_
-# define _MY_SKIPLIST_
-# define _OUT_MAX_ 0xffffffff
 # define _MAX_LAYER_ 8
-
-unsigned long long ____SEED = 12345; 
-int ___rand() {
-    // return rand();
-    const unsigned long long a = 1664525;
-    const unsigned long long c = 1013904223;
-    const unsigned long long m = 4294967296; 
-    ____SEED = (a * ____SEED + c) % m;
-    return (int)(____SEED & _OUT_MAX_);
-}
-
-int ___layernumgenerate() {
-    int layer = 1;
-    int base = 4;//2;
-    if (___rand() % (base * base) == 0)  layer++;
-    else return layer;
-    while (1) {
-        if (___rand() % base == 0)  layer++;
-        else    break;
-    }
-    if (layer > _MAX_LAYER_)    return _MAX_LAYER_;
-    return layer;
-}
-
-void memcopy(const char *in, char *out, size_t n) {
-    if (in == null || out == null || n <= 0) return;
-    for (auto i = 0; i < n; i++) {
-        out[i] = in[i];
-    }
-}
-
+# include <random>
 # define type_size (sizeof(type) * sizeof(char))
 # define sizeofptr (sizeof(____node_ptr) * sizeof(char))
 typedef struct ____node ____node;
@@ -59,17 +29,58 @@ struct ____node {
     ____node_ptr next[_MAX_LAYER_];
 };
 
-class fakeskiplist {
+class random {
 private:
+    int min, max;
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution;
+public:
+    random(int min, int max) {
+        this->min = min;
+        this->max = max;
+        this->distribution = std::uniform_int_distribution<int>(min, max);
+    }
+    int get_rand() {
+        return this->distribution(this->generator);
+    }
+};
+
+class fakeskiplist: private random {
+private:
+    int curr_lay = 1;
     size_t len = 0;
     size_t data_size = 0;
     ____node head;
     ____node_ptr tail;
 private:
+    void memcopy(const char *in, char *out, size_t n) {
+        if (in == null || out == null || n <= 0) return;
+        for (auto i = 0; i < n; i++) {
+            out[i] = in[i];
+        }
+    }
+    int ___layernumgenerate() {
+# ifdef DEBUG
+        int tmp = this->curr_lay;
+        this->curr_lay++;
+        if (this->curr_lay > _MAX_LAYER_)  this->curr_lay = 1;
+        return tmp;
+# endif
+        int layer = 1;
+        int base = 4;
+        if (this->get_rand() % (base * base) == 0)  layer++;
+        else return layer;
+        while (1) {
+            if (this->get_rand() % base == 0)  layer++;
+            else    break;
+        }
+        if (layer > _MAX_LAYER_)    return _MAX_LAYER_;
+        return layer;
+    }
     ____node_ptr newnode(const void *data) {
         ____node_ptr newptr = new ____node;
         char *newdata = new char[data_size];
-        memcopy((char *)data, newdata, data_size);
+        this->memcopy((char *)data, newdata, data_size);
         newptr->data = newdata;
         newptr->nextlen = ___layernumgenerate();
         for (int i = 0; i < _MAX_LAYER_; i++) newptr->next[i] = null;
@@ -117,11 +128,10 @@ private:
         delete this->tail;
         this->tail = prev_rec_list[0];
         this->len--;
-        if (this->length() == 0)    this->tail = null;
         return data;
     }
 public:
-    fakeskiplist(size_t data_size) {
+    fakeskiplist(size_t data_size): random(0, 1023) {
         this->data_size = data_size;
         this->head.data = null;
         this->head.nextlen = _MAX_LAYER_;
@@ -204,6 +214,9 @@ public:
                     if (prev_rec_list[i] != null) prev_rec_list[i]->next[i] = newptr;
                     if (next_update_list[i] != null)  next_update_list[i]->key[i] += (1 - newptr->key[i]);
                 }
+                else {
+                    if (next_update_list[i] != null)  next_update_list[i]->key[i] ++;
+                }
             }
         }
 
@@ -212,9 +225,7 @@ public:
         delete [] keyrec;
         this->len++;
         return after_key + 1;
-    }
-
-    
+    }   
 
     void *remove(size_t target_key) {
         if (target_key >= this->length() || target_key < 0)    return null;
@@ -318,7 +329,8 @@ public:
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
         this->tail = &(this->head);
     }
-    /*void show() {
+# ifdef DEBUG
+    void show() {
         std::cout << "=========================================" << std::endl;
         ____node_ptr curr = this->head.next[0];
         for (int i = 0; i < this->length(); i++) {
@@ -332,7 +344,8 @@ public:
             curr = curr->next[0];
         }
         std::cout << "=========================================" << std::endl;
-    }*/
+    }
+# endif
 };
 
 # endif
