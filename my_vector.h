@@ -1,6 +1,6 @@
 # ifndef _MY_SKIPLIST_
 # define _MY_SKIPLIST_
-# define DEBUG
+// # define DEBUG
 # ifdef DEBUG
 # include <iostream>
 # endif
@@ -91,6 +91,11 @@ private:
         if (this->length() == 0)    return null;
         ____node_ptr curr = this->head.next[0];
         for (int i = 0; i < curr->nextlen; i++) this->head.next[i] = curr->next[i];
+        for (int i = curr->nextlen; i < _MAX_LAYER_; i++) {
+            if (this->head.next[i] != null) {
+                this->head.next[i]->key[i]--;
+            }
+        }
         char *data = curr->data;
         this->len--;
         delete curr;
@@ -120,13 +125,21 @@ private:
             while (curr->next[0] != this->tail) {
                 curr = curr->next[0];
             }
-            prev_rec_list[curr_layer] = curr;
         }
 
-        for (int i = 0; i < this->tail->nextlen; i++)   prev_rec_list[i]->next[i] = null;
+        for (int i = 0; i < curr->nextlen; i++) {
+            prev_rec_list[i] = curr;
+        }
+        
+        for (int i = 0; i < this->tail->nextlen; i++) {
+            if (prev_rec_list[i] != null) {
+                prev_rec_list[i]->next[i] = null;
+            }
+        }
         char *data = this->tail->data;
         delete this->tail;
         this->tail = prev_rec_list[0];
+        this->tail->next[0] = null;
         this->len--;
         return data;
     }
@@ -260,17 +273,18 @@ public:
                 count++;
             }
         }
-
+        
         for (int i = curr->nextlen - 1; i >= 0; i--) {
             prev_rec_list[i] = curr;
+            next_update_list[i] = curr->next[i];
         }
-        if (target_key == this->length() - 1)   this->tail = curr;
         curr = curr->next[0];
         for (int i = curr->nextlen - 1; i > 0; i--) {
             next_update_list[i] = curr->next[i];
         }
         next_update_list[0] = null;
         
+
         for (int i = 0; i < _MAX_LAYER_; i++) {
             if (i < curr->nextlen) {
                 prev_rec_list[i]->next[i] = curr->next[i];
@@ -278,7 +292,9 @@ public:
                     next_update_list[i]->key[i] += (curr->key[i] - 1); 
                 }
             }
-            next_update_list[i]->key[i] -= 1;
+            else if (next_update_list[i] != null) {
+                next_update_list[i]->key[i]--; 
+            }
         }
         
         char *data = curr->data;
@@ -342,6 +358,21 @@ public:
             }
             std::cout << std::endl;
             curr = curr->next[0];
+        }
+        std::cout << "=========================================" << std::endl;
+    }
+    void show_2() {
+        std::cout << "=========================================" << std::endl;
+        ____node_ptr curr = &(this->head);
+        for (int i = 0; i < _MAX_LAYER_; i++) {
+            std::cout << i << "::: ";
+            while (curr != null) {
+                std::cout << curr->key[i];
+                std::cout << "---";
+                curr = curr->next[i];
+            }
+            std::cout << std::endl;
+            curr = &(this->head);
         }
         std::cout << "=========================================" << std::endl;
     }
