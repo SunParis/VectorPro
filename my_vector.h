@@ -35,10 +35,10 @@ private:
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution;
 public:
-    random(int min, int max) {
-        this->min = min;
-        this->max = max;
-        this->distribution = std::uniform_int_distribution<int>(min, max);
+    random() {
+        this->min = 0;
+        this->max = 1023;
+        this->distribution = std::uniform_int_distribution<int>(this->min, this->max);
     }
     int get_rand() {
         return this->distribution(this->generator);
@@ -47,23 +47,24 @@ public:
 
 class fakeskiplist: private random {
 private:
-    int curr_lay = 1;
+    int _____curr_lay = 1;
     size_t len = 0;
     size_t data_size = 0;
     ____node head;
     ____node_ptr tail;
-private:
+protected:
     void memcopy(const char *in, char *out, size_t n) {
         if (in == null || out == null || n <= 0) return;
         for (auto i = 0; i < n; i++) {
             out[i] = in[i];
         }
     }
+private:
     int ___layernumgenerate() {
 # ifdef DEBUG
-        int tmp = this->curr_lay;
-        this->curr_lay++;
-        if (this->curr_lay > _MAX_LAYER_)  this->curr_lay = 1;
+        int tmp = this->_____curr_lay;
+        this->_____curr_lay++;
+        if (this->_____curr_lay > _MAX_LAYER_)  this->_____curr_lay = 1;
         return tmp;
 # endif
         int layer = 1;
@@ -143,8 +144,24 @@ private:
         this->len--;
         return data;
     }
+    size_t insert_head(const void *data) {
+        ____node_ptr newptr = this->newnode(data);
+        for (int i = newptr->nextlen; i < _MAX_LAYER_; i++) {
+            if (this->head.next[i] != null) {
+                this->head.next[i]->key[i]++;
+            }
+        }
+        for (int i = 0; i < newptr->nextlen; i++) {
+            if (i > 0)  newptr->key[i] = 1;
+            newptr->next[i] = this->head.next[i];
+            this->head.next[i] = newptr;
+        }
+        this->len++;
+        if (this->tail == null) this->tail = newptr;
+        return 0;
+    }
 public:
-    fakeskiplist(size_t data_size): random(0, 1023) {
+    fakeskiplist(size_t data_size) {
         this->data_size = data_size;
         this->head.data = null;
         this->head.nextlen = _MAX_LAYER_;
@@ -160,6 +177,7 @@ public:
     }
     size_t insert(const void *data, size_t after_key) {
         if (after_key >= this->length() && after_key != -1)    return -1;
+        if (after_key == -1)    return this->insert_head(data);
         ____node_ptr newptr = this->newnode(data);
         ____node_ptr curr = &(this->head);
         ____node_ptr next_update_list[_MAX_LAYER_];
@@ -323,7 +341,6 @@ public:
             count += curr->next[curr_layer]->key[curr_layer];
             curr = curr->next[curr_layer];
         }
-        if (count == target_key)    return curr->data;
         if (curr_layer == 0) {
             while (count != target_key) {
                 curr = curr->next[0];
@@ -333,6 +350,49 @@ public:
         
         return curr->data;
     }
+
+    size_t edit(void *data, size_t target_key) {
+        if (target_key >= this->length() || target_key < 0)    return -1;
+        if (target_key == 0) {
+            delete [] this->head.next[0]->data;
+            this->head.next[0]->data = new char[data_size];
+            this->memcopy((char *)data, this->head.next[0]->data, data_size);
+            return target_key;
+        }
+        if (target_key == this->length() - 1) {
+            delete [] this->tail->data;
+            this->tail->data = new char[data_size];
+            this->memcopy((char *)data, this->tail->data, data_size);
+            return target_key;
+        }
+        ____node_ptr curr =&(this->head);
+        int curr_layer = _MAX_LAYER_ - 1;   
+        size_t count = -1;
+
+        while (count != target_key) {
+            while (curr->next[curr_layer] == null && curr_layer != 0) {
+                curr_layer--;
+            }
+            if (curr_layer == 0)    break;
+            while (curr->next[curr_layer]->key[curr_layer] + count > target_key && curr_layer != 0) {
+                curr_layer--;
+            }
+            if (curr_layer == 0)    break;
+            count += curr->next[curr_layer]->key[curr_layer];
+            curr = curr->next[curr_layer];
+        }
+        if (curr_layer == 0) {
+            while (count != target_key) {
+                curr = curr->next[0];
+                count++;
+            }
+        }
+        delete [] curr->data;
+        curr->data = new char[data_size];
+        this->memcopy((char *)data, curr->data, data_size);
+        return target_key;
+    }
+    
     void Destroyall() {
         ____node_ptr curr = this->head.next[0];
         ____node_ptr tmp;
@@ -382,21 +442,119 @@ public:
 # endif
 
 
+# ifndef _MY_VECTOR_EXCEPTION_
+# define _MY_VECTOR_EXCEPTION_
+class MyVectorException: public std::exception {
+private:
+    string message;
+public:
+    MyVectorException(const char *str): message(str) {}
+    virtual const char* what() const throw () {
+        return message.c_str();
+    } 
+};
+
+# endif
+
 # ifndef _MY_VECTOR_
 # define _MY_VECTOR_
 template <typename type>
 class myvector {
 private:
-    size_t capacity = 0;
-    size_t len = 0;
+    fakeskiplist data;
 public:
-    size_t size() {
-        return this->capacity;
-    }
     size_t length() {
-        return this->len;
+        return this->data.length();
+    }
+    size_t size() {
+        return this->data.length();
+    }
+    myvector(): data(sizeof(type)){
+        this->len = 0;
+        this->capacity = 0;
+    }
+    ~myvector() {
+        this->data.Destroyall();
+    }
+    size_t insert(type *data, size_t pos) {
+        size_t ret = this->data.insert(data, pos);
+        if (ret == -1) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    size_t append(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
+        if (ret == -1) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    size_t push(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
+        if (ret == -1) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    size_t enqueue(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
+        if (ret == -1) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    type *pop() {
+        type *ret = this->data.remove(this->data.length() - 1);
+        if (ret == null) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    type *dequeue() {
+        type *ret = this->data.remove(0);
+        if (ret == null) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    int empty() {
+        if (this->data.length() == 0)   return 1;
+        return 0;
+    }
+    type *remove(size_t pos) {
+        type *ret = this->data.remove(pos);
+        if (ret == null) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    type at(size_t pos) {
+        type *ret = this->data.get(pos);        
+        if (ret == null) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return *ret;
+    }
+    size_t edit(type *data, size_t pos) {
+        size_t ret = this->data.edit(data, pos);
+        if (ret == -1) {
+            MyVectorException except("position out of range!!!");
+            throw except;
+        }
+        return ret;
+    }
+    void destroy() {
+        this->data.Destroyall();
     }
 };
-
 
 # endif

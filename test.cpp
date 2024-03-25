@@ -6,19 +6,20 @@ int main() {
     int pos = 0;
     int data = 0;
     fakeskiplist test(sizeof(int));
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 6; i++) {
         test.insert(&data, -1);
-        //test.show();
-        //test.show_2();
     }
-    // test.show();
-    // test.show_2();
+# ifdef DEBUG
+    test.show();
+    test.show_2();
+# endif
     cin >> pos;
     while (pos >= 0) {
-        int *tmp = (int *)test.remove(pos);
-        // test.show();
-        delete [] tmp;
-        // test.show_2();
+        test.insert(&data, -1);
+# ifdef DEBUG
+        test.show();
+        test.show_2();
+# endif
         cin >> pos;
     }
     test.Destroyall();
