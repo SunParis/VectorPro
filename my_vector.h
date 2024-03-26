@@ -1,6 +1,6 @@
+// # define DEBUG
 # ifndef _MY_SKIPLIST_
 # define _MY_SKIPLIST_
-// # define DEBUG
 # ifdef DEBUG
 # include <iostream>
 # endif
@@ -170,7 +170,7 @@ private:
                 curr_layer--;
             }
             if (curr_layer == 0)    break;
-            while (curr_pos + curr->next[curr_layer]->key[curr_layer] < target - 1) {
+            while (curr_pos + curr->next[curr_layer]->key[curr_layer] <= target - 1) {
                 curr_pos += curr->next[curr_layer]->key[curr_layer];
                 curr = curr->next[curr_layer];
                 if (curr->next[curr_layer] == null) break;
@@ -194,6 +194,7 @@ private:
         for (int i = 0; i < curr->nextlen; i++) {
             if (next != null)   next[i] = curr->next[i];
         }
+
         return curr;
     }
     void *remove_head(void) {
@@ -290,8 +291,8 @@ public:
                 curr->next[i] = newptr;
                 newptr->key[i] = 1;
             }
-            else if (prev_rec_list[i] != null) {
-                prev_rec_list[i]->next[i] = newptr;
+            else {
+                if (prev_rec_list[i] != null)   prev_rec_list[i]->next[i] = newptr;
                 newptr->key[i] = after_key - key_rec[i] + 1;
             }
             if (next_update_list[i] != null)    next_update_list[i]->key[i] -= (newptr->key[i] - 1);
@@ -432,11 +433,10 @@ public:
         return this->data.length();
     }
     size_t size() {
-        return this->data.length();
+        return this->data.length() * sizeof(type);
     }
     myvector(): data(sizeof(type)){
-        this->len = 0;
-        this->capacity = 0;
+        ;
     }
     ~myvector() {
         this->data.removeall();
@@ -474,7 +474,7 @@ public:
         return ret;
     }
     type *pop() {
-        type *ret = this->data.remove(this->data.length() - 1);
+        type *ret = (type *)this->data.remove(this->data.length() - 1);
         if (ret == null) {
             MyVectorException except("Position out of range!!!");
             throw except;
@@ -482,7 +482,7 @@ public:
         return ret;
     }
     type *dequeue() {
-        type *ret = this->data.remove(0);
+        type *ret = (type *)this->data.remove(0);
         if (ret == null) {
             MyVectorException except("Position out of range!!!");
             throw except;
@@ -493,23 +493,23 @@ public:
         if (this->data.length() == 0)   return 1;
         return 0;
     }
-    type *remove(size_t pos) {
-        type *ret = this->data.remove(pos);
+    void remove(size_t pos) {
+        char *ret = (char *)this->data.remove(pos);
+        if (ret == null) {
+            MyVectorException except("Position out of range!!!");
+            throw except;
+        }
+        delete [] ret;
+    }
+    const type *at(size_t pos) {
+        type *ret = (type *)this->data.get(pos);      
         if (ret == null) {
             MyVectorException except("Position out of range!!!");
             throw except;
         }
         return ret;
     }
-    type *at(size_t pos) {
-        type *ret = this->data.get(pos);        
-        if (ret == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
-        }
-        return ret;
-    }
-    size_t edit(type *data, size_t pos) {
+    size_t set(type *data, size_t pos) {
         size_t ret = this->data.edit(data, pos);
         if (ret == -1) {
             MyVectorException except("Position out of range!!!");
