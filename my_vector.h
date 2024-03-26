@@ -64,7 +64,6 @@ public:
 
 class fakeskiplist: private random {
 private:
-    int _____curr_lay = 1;
     size_t len = 0;
     size_t data_size = 0;
     ____node head;
@@ -78,12 +77,6 @@ protected:
     }
 private:
     int ___layernumgenerate() {
-# ifdef DEBUG
-        int tmp = this->_____curr_lay;
-        this->_____curr_lay++;
-        if (this->_____curr_lay > _MAX_LAYER_)  this->_____curr_lay = 1;
-        return tmp;
-# endif
         int layer = 1;
         int base = 4;
         if (this->get_rand() % (base * base) == 0)  layer++;
@@ -122,7 +115,7 @@ private:
             return this->head.next[0];
         }
         else if (target == this->length() - 1) {
-            while (curr->next[curr_layer] != this->tail) {
+            while (curr->next[0] != this->tail) {
                 while (curr->next[curr_layer] == null && curr_layer != 0) {
                     if (prev != null)   prev[curr_layer] = curr;
                     if (prev_pos != null)   prev_pos[curr_layer] = curr_pos;
@@ -131,8 +124,8 @@ private:
                 if (curr_layer == 0)    break;
                 while (curr->next[curr_layer] != this->tail) {
                     if (curr->next[curr_layer] == null)  break;
-                    if (prev_pos != null)   curr_pos += curr->key[curr_layer];
                     curr = curr->next[curr_layer];
+                    if (prev_pos != null)   curr_pos += curr->key[curr_layer];
                 }
                 if (curr->next[curr_layer] == this->tail) {
                     if (prev != null)   prev[curr_layer] = curr;
@@ -141,7 +134,7 @@ private:
                 }
             }
             if (curr_layer == 0) {
-                while (curr->next[curr_layer] != this->tail) {
+                while (curr->next[0] != this->tail) {
                     if (prev_pos != null)   curr_pos += 1;
                     curr = curr->next[0];
                 }
@@ -151,8 +144,9 @@ private:
                 if (prev_pos != null)   prev_pos[i] = curr_pos;
             }
             for (int i = 0; i < curr->nextlen && next != null; i++) {
-                next[i] == null;
+                if (next != null)   next[i] == null;
             }
+
             return this->tail;
         }
         while (curr_pos != target - 1) {
@@ -249,14 +243,17 @@ private:
         size_t prev_key_rec[_MAX_LAYER_];
         ____node_ptr curr = this->prev_curr_next_find(this->length() - 1, prev_rec_list, null, prev_key_rec);
         ____node_ptr newptr = this->newnode(data);
-        for (int i = 0; i < curr->nextlen && i < newptr->nextlen; i++) {
-            curr->next[i] = newptr;
-        }
-        for (int i = curr->nextlen; i < _MAX_LAYER_ && i < newptr->nextlen; i++) {
-            if (prev_rec_list[i] != null) {
-                prev_rec_list[i]->next[i] = newptr;
+        for (int i = 0; i < newptr->nextlen; i++) {
+            if (i < curr->nextlen) {
+                curr->next[i] = newptr;
+                newptr->key[i] = 1;
+            }
+            else {
+                if (prev_rec_list[i] != null)   prev_rec_list[i]->next[i] = newptr;
+                newptr->key[i] = this->length() - prev_key_rec[i];
             }
         }
+        newptr->key[0] = 0;
         this->len++;
         this->tail = newptr;
         return 0;
@@ -489,7 +486,7 @@ public:
         }
         return ret;
     }
-    int empty() {
+    int is_empty() {
         if (this->data.length() == 0)   return 1;
         return 0;
     }
@@ -515,6 +512,15 @@ public:
             MyVectorException except("Position out of range!!!");
             throw except;
         }
+        return ret;
+    }
+    type& operator[](size_t pos) {
+        type *data = (type *)this->data.get(pos);
+        if (data == null) {
+            MyVectorException except("Position out of range!!!");
+            throw except;
+        }
+        type& ret = *data;
         return ret;
     }
     void destroy() {
