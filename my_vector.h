@@ -391,10 +391,12 @@ public:
             this->free_node(tmp);
         }
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
-        this->tail = &(this->head);
+        this->len = 0;
+        this->tail = null;
     }
     void destroy() {
         this->removeall();
+        this->len = 0;
         delete [] this->head.key;
         delete [] this->head.next;
     }
@@ -524,6 +526,9 @@ public:
         }
         type& ret = *data;
         return ret;
+    }
+    void reset() {
+        this->data.removeall();
     }
 };
 
