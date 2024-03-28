@@ -399,6 +399,8 @@ public:
         this->len = 0;
         delete [] this->head.key;
         delete [] this->head.next;
+        this->head.key = null;
+        this->head.next = null;
     }
 # ifdef DEBUG
     void show() {
