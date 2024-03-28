@@ -298,9 +298,7 @@ public:
         this->tail = null;
     }
     ~____fakeskiplist() {
-        this->removeall();
-        delete [] this->head.key;
-        delete [] this->head.next;
+        this->destroy();
     }
     size_t length() {
         return this->len;
@@ -395,6 +393,11 @@ public:
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
         this->tail = &(this->head);
     }
+    void destroy() {
+        this->removeall();
+        delete [] this->head.key;
+        delete [] this->head.next;
+    }
 # ifdef DEBUG
     void show() {
         std::cout << "=========================================" << std::endl;
@@ -444,7 +447,7 @@ public:
         ;
     }
     ~myvector() {
-        this->data.removeall();
+        this->data.destroy();
     }
     size_t insert(type &data, size_t pos) {
         size_t ret = this->data.insert(&data, pos);
@@ -521,9 +524,6 @@ public:
         }
         type& ret = *data;
         return ret;
-    }
-    void destroy() {
-        this->data.removeall();
     }
 };
 
