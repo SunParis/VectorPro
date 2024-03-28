@@ -1,6 +1,7 @@
+# ifndef _MY_VECTOR_
+# define _MY_VECTOR_
 // # define DEBUG
-# ifndef _MY_SKIPLIST_
-# define _MY_SKIPLIST_
+
 # ifdef DEBUG
 # include <iostream>
 # endif
@@ -16,40 +17,11 @@
 # define null 0
 # endif
 
-# define _MAX_LAYER_ 8
-# define type_size (sizeof(type) * sizeof(char))
-# define sizeofptr (sizeof(____node_ptr) * sizeof(char))
-typedef struct ____node ____node;
-typedef ____node* ____node_ptr;
-struct ____node {
-    char *data;
-    int nextlen;
-    int key[_MAX_LAYER_];
-    ____node_ptr next[_MAX_LAYER_];
-};
-
-# include <random>
-class random {
-private:
-    int min, max;
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution;
-public:
-    random() {
-        this->min = 0;
-        this->max = 1023;
-        this->distribution = std::uniform_int_distribution<int>(this->min, this->max);
-    }
-    int get_rand() {
-        return this->distribution(this->generator);
-    }
-};
-
-class memexcpetion: public std::exception {
+class ____MemoryException: public std::exception {
 private:
     char message[30];
 public:
-    memexcpetion(const char *str) {
+    ____MemoryException(const char *str) {
         int idx = 0;
         while(str[idx] != 0) {
             message[idx] = str[idx];
@@ -62,7 +34,62 @@ public:
     } 
 };
 
-class fakeskiplist: private random {
+class ____MyVectorException: public std::exception {
+private:
+    char message[30];
+public:
+    ____MyVectorException(const char *str) {
+        int idx = 0;
+        while(str[idx] != 0) {
+            message[idx] = str[idx];
+            idx++;
+        }
+        message[idx] = 0;
+    }
+    virtual const char* what() const throw () {
+        return this->message;
+    } 
+};
+
+
+# define _MAX_LAYER_ 30
+# define _____MAXCURR 0x3fffffff
+class ____LayerGenerator {
+private:
+    size_t curr = 0;
+public:
+    ____LayerGenerator() {
+        this->curr = 0;
+    }
+    int ___layernumgenerate() {
+        int ret = 1;
+        size_t tmp = this->curr;
+        this->curr++;
+        if (this->curr > _____MAXCURR)  this->curr = 0;
+        if ((tmp & 63) == 63)  ret += 1;
+        else    return ret;
+        tmp = tmp >> 6;
+        while (ret < _MAX_LAYER_) {
+            if ((tmp & 3) == 3)  ret += 1;
+            else    return ret;
+            tmp = tmp >> 2;
+        }
+        return _MAX_LAYER_;
+    }
+};
+
+# define type_size (sizeof(type) * sizeof(char))
+# define sizeofptr (sizeof(____node_ptr) * sizeof(char))
+typedef struct ____node ____node;
+typedef ____node* ____node_ptr;
+struct ____node {
+    char *data;
+    int nextlen;
+    int *key;
+    ____node_ptr *next;
+};
+
+class ____fakeskiplist: private ____LayerGenerator {
 private:
     size_t len = 0;
     size_t data_size = 0;
@@ -76,30 +103,34 @@ protected:
         }
     }
 private:
-    int ___layernumgenerate() {
-        int layer = 1;
-        int base = 4;
-        if (this->get_rand() % (base * base) == 0)  layer++;
-        else return layer;
-        while (1) {
-            if (this->get_rand() % base == 0)  layer++;
-            else    break;
-        }
-        if (layer > _MAX_LAYER_)    return _MAX_LAYER_;
-        return layer;
-    }
     ____node_ptr newnode(const void *data) {
         ____node_ptr newptr = new ____node;
-        char *newdata = new char[data_size];
-        if (newdata == 0 || newptr == 0)    throw memexcpetion("Out of memory!!!");
-        this->memcopy((char *)data, newdata, data_size);
-        newptr->data = newdata;
-        newptr->nextlen = ___layernumgenerate();
-        for (int i = 0; i < _MAX_LAYER_; i++) {
+        if (newptr == 0)    throw ____MemoryException("Out of memory!!!");
+        newptr->nextlen = this->___layernumgenerate();
+        newptr->data = new char[data_size];
+        newptr->key = new int[newptr->nextlen];
+        newptr->next = new ____node_ptr[newptr->nextlen];
+        if (newptr->data == null || newptr->key == null || newptr->next == null) {
+            if (newptr->data == null)   delete [] newptr->data;
+            if (newptr->key == null)    delete [] newptr->key;
+            if (newptr->next == null)   delete [] newptr->next;
+            delete newptr;
+            throw ____MemoryException("Out of memory!!!");
+        }
+        this->memcopy((char *)data, newptr->data, data_size);
+        for (int i = 0; i < newptr->nextlen; i++) {
             newptr->next[i] = null;
             newptr->key[i] = 0;
         }
         return newptr;
+    }
+    char *free_node(____node_ptr target) {
+        if (target == null) return null;
+        char *ret = target->data;
+        delete [] target->key;
+        delete [] target->next;
+        delete target;
+        return ret;
     }
     ____node_ptr prev_curr_next_find(size_t target, ____node_ptr *prev = null, ____node_ptr *next = null, size_t *prev_pos = null) {
         if (target == -1 || target >= this->length())   return null;
@@ -107,10 +138,10 @@ private:
         size_t curr_pos = -1;
         int curr_layer = _MAX_LAYER_ - 1;
         if (target == 0) {
-            for (int i = 0; i < this->head.nextlen; i++) {
+            for (int i = 0; i < this->head.next[0]->nextlen; i++) {
                 if (prev != null)   prev[i] = &(this->head);
-                if (next != null)   next[i] = this->head.next[i];
-                if (prev_pos != null)   prev_pos[i] = -1;
+                if (next != null)   next[i] = this->head.next[0]->next[i];
+                if (prev_pos != null)   prev_pos[i] = 0;
             }
             return this->head.next[0];
         }
@@ -125,7 +156,7 @@ private:
                 while (curr->next[curr_layer] != this->tail) {
                     if (curr->next[curr_layer] == null)  break;
                     curr = curr->next[curr_layer];
-                    if (prev_pos != null)   curr_pos += curr->key[curr_layer];
+                    curr_pos += curr->key[curr_layer];
                 }
                 if (curr->next[curr_layer] == this->tail) {
                     if (prev != null)   prev[curr_layer] = curr;
@@ -135,15 +166,13 @@ private:
             }
             if (curr_layer == 0) {
                 while (curr->next[0] != this->tail) {
-                    if (prev_pos != null)   curr_pos += 1;
+                    curr_pos += 1;
                     curr = curr->next[0];
                 }
             }
             for (int i = 0; i < curr->nextlen; i++) {
                 if (prev != null)   prev[i] = curr;
                 if (prev_pos != null)   prev_pos[i] = curr_pos;
-            }
-            for (int i = 0; i < curr->nextlen && next != null; i++) {
                 if (next != null)   next[i] == null;
             }
 
@@ -200,9 +229,8 @@ private:
                 this->head.next[i]->key[i]--;
             }
         }
-        char *data = curr->data;
+        char *data = this->free_node(curr);
         this->len--;
-        delete curr;
         if (this->length() == 0)    this->tail = null;
         return data;
     }
@@ -211,15 +239,13 @@ private:
         ____node_ptr curr = this->prev_curr_next_find(this->length() - 1, prev_rec_list);       
         
         for (int i = 0; i < this->tail->nextlen; i++) {
-            if (prev_rec_list[i] != null) {
-                prev_rec_list[i]->next[i] = null;
-            }
+            prev_rec_list[i]->next[i] = null;
         }
-        char *data = this->tail->data;
-        delete this->tail;
+        char *data = this->free_node(this->tail);
+        this->len--;
         this->tail = prev_rec_list[0];
         this->tail->next[0] = null;
-        this->len--;
+        if (this->length() == 0)    this->tail = null;
         return data;
     }
     size_t insert_head(const void *data) {
@@ -249,7 +275,7 @@ private:
                 newptr->key[i] = 1;
             }
             else {
-                if (prev_rec_list[i] != null)   prev_rec_list[i]->next[i] = newptr;
+                prev_rec_list[i]->next[i] = newptr;
                 newptr->key[i] = this->length() - prev_key_rec[i];
             }
         }
@@ -259,16 +285,22 @@ private:
         return 0;
     }
 public:
-    fakeskiplist(size_t data_size) {
+    ____fakeskiplist(size_t data_size) {
         this->data_size = data_size;
         this->head.data = null;
         this->head.nextlen = _MAX_LAYER_;
-        for (int i = 0; i < _MAX_LAYER_; i++) this->head.key[i] = -1;
-        for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
+        this->head.key = new int[_MAX_LAYER_];
+        this->head.next = new ____node_ptr[_MAX_LAYER_];
+        for (int i = 0; i < _MAX_LAYER_; i++) {
+            this->head.key[i] = -1;
+            this->head.next[i] = null;
+        }
         this->tail = null;
     }
-    ~fakeskiplist() {
+    ~____fakeskiplist() {
         this->removeall();
+        delete [] this->head.key;
+        delete [] this->head.next;
     }
     size_t length() {
         return this->len;
@@ -289,7 +321,7 @@ public:
                 newptr->key[i] = 1;
             }
             else {
-                if (prev_rec_list[i] != null)   prev_rec_list[i]->next[i] = newptr;
+                prev_rec_list[i]->next[i] = newptr;
                 newptr->key[i] = after_key - key_rec[i] + 1;
             }
             if (next_update_list[i] != null)    next_update_list[i]->key[i] -= (newptr->key[i] - 1);
@@ -300,7 +332,7 @@ public:
             if (next_update_list[i] != null)    next_update_list[i]->key[i]++;
         }
         this->len++;
-        return after_key + 1;
+        return (after_key + 1);
     }   
 
     void *remove(size_t target_key) {
@@ -311,7 +343,7 @@ public:
         ____node_ptr prev_rec_list[_MAX_LAYER_];
         ____node_ptr curr = this->prev_curr_next_find(target_key, prev_rec_list, next_update_list);
         for (int i = 0; i < _MAX_LAYER_; i++) {
-            if (prev_rec_list[i] != null)   prev_rec_list[i]->next[i] = next_update_list[i];
+            prev_rec_list[i]->next[i] = next_update_list[i];
             if (next_update_list[i] != null) {
                 if (i < curr->nextlen) {
                     next_update_list[i]->key[i] += (curr->key[i] - 1); 
@@ -323,8 +355,7 @@ public:
         }
         next_update_list[0]->key[0] = 0;
 
-        char *data = curr->data;
-        delete curr;
+        char *data = this->free_node(curr);
         this->len--;
         return data;
     }
@@ -359,7 +390,7 @@ public:
             tmp = curr;
             curr = curr->next[0];
             delete [] tmp->data;
-            delete tmp;
+            this->free_node(tmp);
         }
         for (int i = 0; i < _MAX_LAYER_; i++) this->head.next[i] = null;
         this->tail = &(this->head);
@@ -398,33 +429,10 @@ public:
 # endif
 };
 
-# endif
-
-
-# ifndef _MY_VECTOR_
-# define _MY_VECTOR_
-
-class MyVectorException: public std::exception {
-private:
-    char message[30];
-public:
-    MyVectorException(const char *str) {
-        int idx = 0;
-        while(str[idx] != 0) {
-            message[idx] = str[idx];
-            idx++;
-        }
-        message[idx] = 0;
-    }
-    virtual const char* what() const throw () {
-        return this->message;
-    } 
-};
-
 template <typename type>
 class myvector {
 private:
-    fakeskiplist data;
+    ____fakeskiplist data;
 public:
     size_t length() {
         return this->data.length();
@@ -438,53 +446,47 @@ public:
     ~myvector() {
         this->data.removeall();
     }
-    size_t insert(type *data, size_t pos) {
-        size_t ret = this->data.insert(data, pos);
+    size_t insert(type &data, size_t pos) {
+        size_t ret = this->data.insert(&data, pos);
         if (ret == -1) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
-    size_t append(type *data) {
-        size_t ret = this->data.insert(data, this->data.length() - 1);
+    size_t append(type &data) {
+        size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
-    size_t push(type *data) {
-        size_t ret = this->data.insert(data, this->data.length() - 1);
+    size_t push(type &data) {
+        size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
-    size_t enqueue(type *data) {
-        size_t ret = this->data.insert(data, this->data.length() - 1);
+    size_t enqueue(type &data) {
+        size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
     type *pop() {
-        type *ret = (type *)this->data.remove(this->data.length() - 1);
-        if (ret == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+        type *data = (type *)this->data.remove(this->data.length() - 1);
+        if (data == null) {
+            throw ____MyVectorException("Position out of range!!!");
         }
-        return ret;
+        return data;
     }
     type *dequeue() {
-        type *ret = (type *)this->data.remove(0);
-        if (ret == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+        type *data = (type *)this->data.remove(0);
+        if (data == null) {
+            throw ____MyVectorException("Position out of range!!!");
         }
-        return ret;
+        return data;
     }
     int is_empty() {
         if (this->data.length() == 0)   return 1;
@@ -493,32 +495,29 @@ public:
     void remove(size_t pos) {
         char *ret = (char *)this->data.remove(pos);
         if (ret == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         delete [] ret;
     }
-    const type *at(size_t pos) {
-        type *ret = (type *)this->data.get(pos);      
-        if (ret == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+    type& at(size_t pos) {
+        type *data = (type *)this->data.get(pos);      
+        if (data == null) {
+            throw ____MyVectorException("Position out of range!!!");
         }
+        type& ret = *data;
         return ret;
     }
-    size_t set(type *data, size_t pos) {
-        size_t ret = this->data.edit(data, pos);
+    size_t set(type& data, size_t pos) {
+        size_t ret = this->data.edit(&data, pos);
         if (ret == -1) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
     type& operator[](size_t pos) {
         type *data = (type *)this->data.get(pos);
         if (data == null) {
-            MyVectorException except("Position out of range!!!");
-            throw except;
+            throw ____MyVectorException("Position out of range!!!");
         }
         type& ret = *data;
         return ret;
@@ -528,4 +527,107 @@ public:
     }
 };
 
+# endif
+
+
+# ifdef _HASH_TABLE_
+# define _HASH_TABLE_
+# define MYHASH(X) (unsigned char)((X) & 0xff)
+typedef struct ____hash_node_ ____hash_node_;
+typedef ____hash_node_* ____hash_ptr;
+struct ____hash_node_ {
+    size_t idx;
+    char *data;
+    ____hash_ptr next;
+};
+class __hash_table__ {
+private:
+    size_t datasize;
+    ____hash_ptr table[256];
+    ____hash_ptr newhashnode(char *data, size_t idx) {
+        ____hash_ptr newnode = new ____hash_node_;
+        if (newnode == null)    throw memexcpetion("Out fo memory!!!");
+        newnode->data = data;
+        newnode->idx = idx;
+        newnode->next = null;
+        return newnode;
+    }
+    void update_table(char *data, char olddata) {
+        if (data == null)   return;
+        int idx = MYHASH(olddata);
+        ____hash_ptr curr = this->table[idx];
+        ____hash_ptr prev;
+        while (curr != null) {
+            if (curr->data = data)  break;
+            prev = curr;
+            curr = curr->next;
+        }
+        if (curr == null)   return;
+        prev->next = curr->next;
+        int newidx = MYHASH(data[0]);
+        curr->next = this->table[newidx];
+        this->table[newidx] = curr;
+    }
+public:
+    __hash_table__(size_t data) {
+        this->datasize = data;
+        for (int i = 0; i < 256; i++) {
+            this->table[i] = null;
+        }
+    }
+    ~__hash_table__() {
+        this->removeall();
+    }
+    ____hash_ptr intotable(char *data, size_t idx) {
+        if (data == null)   return null;
+        ____hash_ptr newnode = this->newhashnode(data, idx);
+        int hashvalue = MYHASH(data[0]);
+        newnode->next = this->table[hashvalue]; 
+        this->table[hashvalue] = newnode;
+        return newnode;
+    }
+    size_t find(char *data) {
+        if (data == null)   return -1;
+        int hashvalue = MYHASH(data[0]);
+        ____hash_ptr curr = this->table[hashvalue];
+        while (curr != null) {
+            int flag = 1;
+            for (int i = 0; i < this->datasize; i++) {
+                if (curr->data[i] != data[i]) {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag == 1)  return curr->idx;
+            curr = curr->next;
+        }
+        return -1;
+    }
+    void remove(char *data) {
+        if (data == null)   return;
+        int idx = MYHASH(data[0]);
+        ____hash_ptr curr = this->table[idx];
+        ____hash_ptr prev;
+        while (curr != null) {
+            if (curr->data = data)  break;
+            prev = curr;
+            curr = curr->next;
+        }
+        if (curr == null)   return;
+        prev->next = curr->next;
+        delete curr;
+    }
+    void removeall() {
+        for (int i = 0; i < 256; i++) {
+            ____hash_ptr curr = this->table[i];
+            ____hash_ptr tmp = curr;
+            while (curr != null) {
+                tmp = curr->next;
+                delete [] curr;
+                curr = tmp;
+            }
+            this->table[i] = null;
+        }
+    }
+};
 # endif
