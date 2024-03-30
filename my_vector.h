@@ -382,6 +382,7 @@ public:
     }
     
     void removeall() {
+        if (this->len == 0) return;
         ____node_ptr curr = this->head.next[0];
         ____node_ptr tmp;
         while (curr != null) {
@@ -395,12 +396,16 @@ public:
         this->tail = null;
     }
     void destroy() {
-        this->removeall();
+        if (this->len != 0) this->removeall();
+        if (this->head.next != null) {
+            delete [] this->head.next;
+            this->head.next = null;
+        }
+        if (this->head.key != null) {
+            delete [] this->head.key;
+            this->head.key = null;
+        }
         this->len = 0;
-        delete [] this->head.key;
-        delete [] this->head.next;
-        this->head.key = null;
-        this->head.next = null;
     }
 # ifdef DEBUG
     void show() {
@@ -467,6 +472,13 @@ public:
         }
         return ret;
     }
+    size_t append(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
+        if (ret == -1) {
+            throw ____MyVectorException("Position out of range!!!");
+        }
+        return ret;
+    }
     size_t push(type &data) {
         size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
@@ -474,8 +486,22 @@ public:
         }
         return ret;
     }
+    size_t push(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
+        if (ret == -1) {
+            throw ____MyVectorException("Position out of range!!!");
+        }
+        return ret;
+    }
     size_t enqueue(type &data) {
         size_t ret = this->data.insert(&data, this->data.length() - 1);
+        if (ret == -1) {
+            throw ____MyVectorException("Position out of range!!!");
+        }
+        return ret;
+    }
+    size_t enqueue(type *data) {
+        size_t ret = this->data.insert(data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
         }
@@ -516,6 +542,13 @@ public:
     }
     size_t set(type& data, size_t pos) {
         size_t ret = this->data.edit(&data, pos);
+        if (ret == -1) {
+            throw ____MyVectorException("Position out of range!!!");
+        }
+        return ret;
+    }
+    size_t set(type *data, size_t pos) {
+        size_t ret = this->data.edit(data, pos);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
         }
