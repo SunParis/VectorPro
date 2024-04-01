@@ -366,6 +366,14 @@ public:
         return curr->data;
     }
 
+    ____node_ptr get_node_ptr(size_t target_key) {
+        if (target_key >= this->length() || target_key < 0)    return null;
+        if (target_key == 0)    return this->head.next[0];
+        if (target_key == this->length() - 1)    return this->tail;
+        ____node_ptr curr = this->prev_curr_next_find(target_key);        
+        return curr;
+    }
+
     size_t edit(void *data, size_t target_key) {
         if (target_key >= this->length() || target_key < 0)    return -1;
         if (target_key == 0) {
@@ -445,6 +453,13 @@ template <typename type>
 class myvector {
 private:
     ____fakeskiplist data;
+    char is_destroy = 0;
+    struct trash_node {
+        char *data;
+        struct trash_node *next;
+    };
+    struct trash_node *trash_head = null;
+    
 public:
     size_t length() {
         return this->data.length();
@@ -452,13 +467,15 @@ public:
     size_t size() {
         return this->data.length() * sizeof(type);
     }
-    myvector(): data(sizeof(type)){
-        ;
+    myvector(): data(sizeof(type)) {
+        this->trash_head = null;
+        this->is_destroy = 0;
     }
     ~myvector() {
-        this->data.destroy();
+        this->destroy();
     }
     size_t insert(type &data, size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(&data, pos);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -466,6 +483,7 @@ public:
         return ret;
     }
     size_t append(type &data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -473,6 +491,7 @@ public:
         return ret;
     }
     size_t append(type *data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -480,6 +499,7 @@ public:
         return ret;
     }
     size_t push(type &data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -487,6 +507,7 @@ public:
         return ret;
     }
     size_t push(type *data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -494,6 +515,7 @@ public:
         return ret;
     }
     size_t enqueue(type &data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(&data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -501,31 +523,46 @@ public:
         return ret;
     }
     size_t enqueue(type *data) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.insert(data, this->data.length() - 1);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
         }
         return ret;
     }
-    type *pop() {
+    type& pop() {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         type *data = (type *)this->data.remove(this->data.length() - 1);
         if (data == null) {
             throw ____MyVectorException("Position out of range!!!");
         }
-        return data;
+        struct trash_node *trash = new struct trash_node;
+        trash->data = (char *)data;
+        trash->next = this->trash_head;
+        this->trash_head = trash;
+        type& ret = *data;
+        return ret;
     }
-    type *dequeue() {
+    type& dequeue() {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         type *data = (type *)this->data.remove(0);
         if (data == null) {
             throw ____MyVectorException("Position out of range!!!");
         }
-        return data;
+        struct trash_node *trash = new struct trash_node;
+        trash->data = (char *)data;
+        trash->next = this->trash_head;
+        this->trash_head = trash;
+        type& ret = *data;
+        return ret;
     }
     int is_empty() {
+        if (this->is_destroy == 1)  return 1;
         if (this->data.length() == 0)   return 1;
         return 0;
     }
     void remove(size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         char *ret = (char *)this->data.remove(pos);
         if (ret == null) {
             throw ____MyVectorException("Position out of range!!!");
@@ -533,6 +570,7 @@ public:
         delete [] ret;
     }
     type& at(size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         type *data = (type *)this->data.get(pos);      
         if (data == null) {
             throw ____MyVectorException("Position out of range!!!");
@@ -541,6 +579,7 @@ public:
         return ret;
     }
     size_t set(type& data, size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.edit(&data, pos);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -548,6 +587,7 @@ public:
         return ret;
     }
     size_t set(type *data, size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         size_t ret = this->data.edit(data, pos);
         if (ret == -1) {
             throw ____MyVectorException("Position out of range!!!");
@@ -555,6 +595,7 @@ public:
         return ret;
     }
     type& operator[](size_t pos) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
         type *data = (type *)this->data.get(pos);
         if (data == null) {
             throw ____MyVectorException("Position out of range!!!");
@@ -562,112 +603,65 @@ public:
         type& ret = *data;
         return ret;
     }
-    void reset() {
+    void clear() {
         this->data.removeall();
     }
-};
-
-# endif
-
-
-# ifdef _HASH_TABLE_
-# define _HASH_TABLE_
-# define MYHASH(X) (unsigned char)((X) & 0xff)
-typedef struct ____hash_node_ ____hash_node_;
-typedef ____hash_node_* ____hash_ptr;
-struct ____hash_node_ {
-    size_t idx;
-    char *data;
-    ____hash_ptr next;
-};
-class __hash_table__ {
-private:
-    size_t datasize;
-    ____hash_ptr table[256];
-    ____hash_ptr newhashnode(char *data, size_t idx) {
-        ____hash_ptr newnode = new ____hash_node_;
-        if (newnode == null)    throw memexcpetion("Out fo memory!!!");
-        newnode->data = data;
-        newnode->idx = idx;
-        newnode->next = null;
-        return newnode;
-    }
-    void update_table(char *data, char olddata) {
-        if (data == null)   return;
-        int idx = MYHASH(olddata);
-        ____hash_ptr curr = this->table[idx];
-        ____hash_ptr prev;
+    void destroy() {
+        if (this->is_destroy == 1)  return;
+        this->data.destroy();
+        struct trash_node *curr = this->trash_head;
         while (curr != null) {
-            if (curr->data = data)  break;
-            prev = curr;
+            this->trash_head = curr;
             curr = curr->next;
+            delete [] this->trash_head->data;
+            delete this->trash_head;
         }
-        if (curr == null)   return;
-        prev->next = curr->next;
-        int newidx = MYHASH(data[0]);
-        curr->next = this->table[newidx];
-        this->table[newidx] = curr;
+        this->is_destroy = 1;
     }
-public:
-    __hash_table__(size_t data) {
-        this->datasize = data;
-        for (int i = 0; i < 256; i++) {
-            this->table[i] = null;
+    size_t find(type& target, size_t from = 0, size_t end = -1) {
+        if (this->is_destroy == 1)  throw ____MyVectorException("This vector has been destroyed!!!");
+        size_t true_start = from;
+        size_t true_end = end;
+        if (true_start == -1)   true_start = this->length();
+        if (true_end == -1) true_end = this->length();
+        if (true_start >= this->length() && true_end >= this->length()) return -1;
+
+        if (true_start <= true_end) {
+            ____node_ptr curr = this->data.get_node_ptr(true_start);
+            for (size_t i = true_start; i < true_end; i++) {
+                type *curr_data_ptr = (type *)curr->data;
+                type& curr_data = *curr_data_ptr;
+                if (curr_data == target)    return i;
+                curr = curr->next[0];
+            }
+            return -1;
         }
-    }
-    ~__hash_table__() {
-        this->removeall();
-    }
-    ____hash_ptr intotable(char *data, size_t idx) {
-        if (data == null)   return null;
-        ____hash_ptr newnode = this->newhashnode(data, idx);
-        int hashvalue = MYHASH(data[0]);
-        newnode->next = this->table[hashvalue]; 
-        this->table[hashvalue] = newnode;
-        return newnode;
-    }
-    size_t find(char *data) {
-        if (data == null)   return -1;
-        int hashvalue = MYHASH(data[0]);
-        ____hash_ptr curr = this->table[hashvalue];
-        while (curr != null) {
-            int flag = 1;
-            for (int i = 0; i < this->datasize; i++) {
-                if (curr->data[i] != data[i]) {
-                    flag = 0;
-                    break;
+        else {
+            size_t ret = -1;
+            if (true_start - true_end <= 64) {
+                ____node_ptr curr = this->data.get_node_ptr(true_end);
+                for (size_t i = true_end; i < true_start; i++) {
+                    type *curr_data_ptr = (type *)curr->data;
+                    type& curr_data = *curr_data_ptr;
+                    if (curr_data == target)    ret = i;
+                    curr = curr->next[0];
                 }
+                return ret;
             }
-            if (flag == 1)  return curr->idx;
-            curr = curr->next;
-        }
-        return -1;
-    }
-    void remove(char *data) {
-        if (data == null)   return;
-        int idx = MYHASH(data[0]);
-        ____hash_ptr curr = this->table[idx];
-        ____hash_ptr prev;
-        while (curr != null) {
-            if (curr->data = data)  break;
-            prev = curr;
-            curr = curr->next;
-        }
-        if (curr == null)   return;
-        prev->next = curr->next;
-        delete curr;
-    }
-    void removeall() {
-        for (int i = 0; i < 256; i++) {
-            ____hash_ptr curr = this->table[i];
-            ____hash_ptr tmp = curr;
-            while (curr != null) {
-                tmp = curr->next;
-                delete [] curr;
-                curr = tmp;
+            else {
+                ____node_ptr curr = this->data.get_node_ptr(true_start - 64);
+                for (size_t i = true_start - 64; i < true_start; i++) {
+                    type *curr_data_ptr = (type *)curr->data;
+                    type& curr_data = *curr_data_ptr;
+                    if (curr_data == target)    ret = i;
+                    curr = curr->next[0];
+                }
+                if (ret != -1)  return ret;
+                ret = this->find(target, true_start - 64, true_end);
+                return ret;
             }
-            this->table[i] = null;
         }
     }
 };
+
 # endif
