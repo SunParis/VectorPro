@@ -1,17 +1,11 @@
 # ifndef _MY_VECTOR_
 # define _MY_VECTOR_
 # include <exception>
+# include <cstddef>
 // # define DEBUG
 
 # ifdef DEBUG
 # include <iostream>
-# endif
-# ifdef _WIN64
-    typedef unsigned long long size_t;
-# elif defined __SIZE_TYPE__
-    typedef __SIZE_TYPE__ size_t;
-# else
-    typedef unsigned int size_t;
 # endif
 
 # ifndef null
