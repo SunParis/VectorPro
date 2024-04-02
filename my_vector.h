@@ -1,5 +1,6 @@
 # ifndef _MY_VECTOR_
 # define _MY_VECTOR_
+# include <exception>
 // # define DEBUG
 
 # ifdef DEBUG
