@@ -1,36 +1,19 @@
+// # include <vector>
 # include <iostream>
-# include "my_vector.h"
+# include "vector_pro.hpp"
 using namespace std;
 
-int func(const int &a, const int &b) {
-    return a - b;
-}
-
 int main() {
-    my_vector<int> A;
-    // printf("?????\n");
-    cout << A.length() << ", " << A.real_length() << endl;
-    for (int i = 199; i >= 0; i--) {
-        A.push(i);
+    vector_pro<int> A;
+    for (int i = 0; i < 15; i++) {
+        A.push_back(i);
     }
-    for (int i = 30; i < 50; i++) {
-        cout << A[i] << ", ";
-    }
-    cout << endl;
-    cout << A.length() << ", " << A.real_length() << endl;
-    try
-    {
-        cout << A[199] << endl;
-    }
-    catch(const char *e)
-    {
-        std::cerr << e << '\n';
-    }
-    cout << A.find(99, func) << endl;
-    A.sort(func);
-    for (int i = 30; i < 50; i++) {
-        cout << A[i] << ", ";
-    }
+    auto lambda_print = [](int& i) {
+        printf("%d", i);
+    };
+    void (*print_func)(int&) = lambda_print;
+    A.print_list(print_func);
+    
     cout << endl;
     return 0;
 }

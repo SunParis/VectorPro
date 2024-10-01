@@ -5,8 +5,8 @@ The code is under development.
 ## How to test this code
 
 ```
-g++ test.cpp
-./a.out
+make
+./main.out
 ```
 
 
