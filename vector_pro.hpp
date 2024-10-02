@@ -4,6 +4,7 @@
 
 # include <limits>
 # include <stdio.h>
+# include <iostream>
 # include <string.h>
 # include <exception>
 # include <vector>
@@ -366,10 +367,28 @@ public:
         }
     }
     
-    void print_list(void(print)(T&)) {
+    void print(void(print)(T&)) {
         printf("[ ");
         for (auto idx = 0; idx < this->end; idx++) {
             print(*(this->data[idx]));
+            if (idx < this->end - 1)    printf(", ");
+        }
+        printf(" ]");
+    }
+
+    void print(void(print)(void)) {
+        printf("[ ");
+        for (auto idx = 0; idx < this->end; idx++) {
+            print();
+            if (idx < this->end - 1)    printf(", ");
+        }
+        printf(" ]");
+    }
+
+    void print() {
+        printf("[ ");
+        for (auto idx = 0; idx < this->end; idx++) {
+            std::cout << *(this->data[idx]);
             if (idx < this->end - 1)    printf(", ");
         }
         printf(" ]");

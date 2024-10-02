@@ -8,11 +8,11 @@ int main() {
     for (int i = 0; i < 15; i++) {
         A.push_back(i);
     }
-    auto lambda_print = [](int& i) {
+    /*auto lambda_print = [](int& i) {
         printf("%d", i);
     };
-    void (*print_func)(int&) = lambda_print;
-    A.print_list(print_func);
+    void (*print_func)(int&) = lambda_print;*/
+    A.print();
     
     cout << endl;
     return 0;
