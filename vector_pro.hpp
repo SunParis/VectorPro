@@ -439,7 +439,7 @@ public:
         printf(" ]");
     }
 
-    friend std::ostream &operator<<(std::ostream &output, const vector_pro<T>& target) { 
+    friend std::ostream& operator<<(std::ostream &output, const vector_pro<T>& target) { 
         output << "[ ";
         for (int64_t idx = 0; idx < target.size(); idx++) {
             output << target[idx];
