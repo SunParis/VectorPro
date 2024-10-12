@@ -1,3 +1,5 @@
+# pragma once
+
 # ifndef null
 # define null 0
 # endif
@@ -10,7 +12,7 @@
 # include <vector>
 
 # ifndef VECTOR_DEFAULT_SIZE
-# define VECTOR_DEFAULT_SIZE 128
+# define VECTOR_DEFAULT_SIZE 64
 # endif
 
 # ifndef MYVECTOR
@@ -266,11 +268,12 @@ public:
     
     // Modifiers
     
-    void assign(long int idx, T& target) {
+    void assign(long int num, T& target) {
         // TODO
     }
 
     long int push_back(const T& target) {
+        
         return this->push(target);
     }
 
@@ -309,17 +312,6 @@ public:
             
     void insert(long int idx, T& target) {
         // TODO
-        /*if (idx < 0)    throw vector_pro_exception("Illegal index.");
-        if (this->end == this->curr_size) {
-            this->resize(this->curr_size * 2);
-        }
-        T *tmp = new T(target);
-        if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing was done.");
-        }        
-        this->data[this->end] = tmp;
-        this->end += 1;
-        return (this->end - 1);*/
     }
         
     void swap(const long int idx1, const long int idx2) {
@@ -398,5 +390,7 @@ public:
         // TODO
     }
 };
+
+
 
 # endif

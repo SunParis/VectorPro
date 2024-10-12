@@ -1,20 +1,15 @@
 // # include <vector>
 # include <iostream>
 # include "vector_pro.hpp"
+# include <vector>
 using namespace std;
 
+
 int main() {
-    vector_pro<int> A;
-    for (int i = 0; i < 15; i++) {
-        A.push_back(i);
-    }
-    /*auto lambda_print = [](int& i) {
-        printf("%d", i);
-    };
-    void (*print_func)(int&) = lambda_print;
-    A.print();*/
-    
-    cout << endl;
+    vector_pro<int> A, B;
+    A.merge(B);
+    vector<int> C;
+    C.assign(7, 10);
     return 0;
 }
 
