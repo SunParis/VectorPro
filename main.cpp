@@ -11,8 +11,8 @@ int main() {
     /*auto lambda_print = [](int& i) {
         printf("%d", i);
     };
-    void (*print_func)(int&) = lambda_print;*/
-    A.print();
+    void (*print_func)(int&) = lambda_print;
+    A.print();*/
     
     cout << endl;
     return 0;
