@@ -13,6 +13,10 @@ clear: clean
 	g++ ./samples/clear.cpp -o clear.out
 	./clear.out
 
+access: clean
+	g++ ./samples/access_element.cpp -o access_element.out
+	./access_element.out
+
 clean:
 	rm -f *.o
 	rm -f *.out

@@ -359,24 +359,24 @@ public:
         return *(this->data[idx]);
     }
     
-    T& at(const LEN_TYPE idx) {
+    T at(const LEN_TYPE idx) {
         if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (idx >= this->data_len) throw vector_pro_exception("Illegal index.");
         return *(this->data[idx]);
     }
 
-    T& front() {
+    T front() {
         if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        return *(this->data[this->base]);
+        return *(this->data[0]);
     }
 
-    T& back() {
+    T back() {
         return this->tail();
     }
     
-    T& tail() {
+    T tail() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        return this->data[this->data_len - 1];
+        return *(this->data[this->data_len - 1]);
     }
 
     const T& read_only(LEN_TYPE idx) const {
@@ -412,12 +412,11 @@ public:
         }
     }
 
-    LEN_TYPE push_back(const T& target) {
-        
-        return this->push(target);
+    void push_back(const T& target) {        
+        this->push(target);
     }
 
-    LEN_TYPE push(const T& target) {
+    void push(const T& target) {
         if (this->data_len == this->curr_size) {
             this->resize(this->curr_size * 2);
         }
@@ -427,7 +426,6 @@ public:
         }        
         this->data[this->data_len] = tmp;
         this->data_len += 1;
-        return (this->data_len - 1);
     }
     
     void pop_back() {
@@ -445,16 +443,72 @@ public:
     }
             
     void insert(LEN_TYPE idx, const T& target) {
-        // TODO
+        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
+        if (idx < 0)  throw vector_pro_exception("Illegal index.");
+        
+        if (this->data_len == this->curr_size) {
+            this->resize(this->curr_size * 2);
+        }
+        T *tmp = new T(target);
+        if (tmp == null) {
+            throw vector_pro_exception("Out of memory, nothing was done.");
+        }
 
+        for (LEN_TYPE i = this->data_len; i > idx; i--) {
+            this->data[i] = this->data[i - 1];
+        }
+        this->data[idx] = tmp;
+        this->data_len += 1;     
     }
 
     void insert(LEN_TYPE idx, LEN_TYPE n, const T& target) {
-        // TODO
+        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
+        if (idx < 0)  throw vector_pro_exception("Illegal index.");
+        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
+        
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+        }
+
+        for (LEN_TYPE i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->data[i] = this->data[i - n];
+        }
+        for (LEN_TYPE i = idx + n - 1; i >= idx; i--) {
+            this->data[i] = new T(target);
+            if (this->data[i] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+        }        
+
+        this->data_len += n;
     }
 
     void insert(LEN_TYPE idx, iterator_pro<T> from, iterator_pro<T> include_to) {
-        // TODO
+        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
+        if (idx < 0)  throw vector_pro_exception("Illegal index.");
+
+        LEN_TYPE n = include_to.get_idx() - from.get_idx() + 1;
+        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+        }
+
+        for (LEN_TYPE i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->data[i] = this->data[i - n];
+        }
+        
+        LEN_TYPE curr = idx;
+        for (auto iter = from; ; iter++) {
+            this->data[curr] = new T(*iter);
+            if (this->data[curr] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+            curr++;
+            if (iter == include_to) break;
+        }        
+
+        this->data_len += n;
     }
 
     void erase(LEN_TYPE target) {

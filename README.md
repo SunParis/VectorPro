@@ -1,6 +1,6 @@
-# MyVector
-This is a refined version of skip list, which can efficiently access element in vector.  
-The code is under development. 
+# VectorPro
+~~This is a refined version of skip list, which can efficiently access element in vector.  
+The code is under development.~~ 
 
 ## How to test this code
 
