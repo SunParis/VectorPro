@@ -310,6 +310,7 @@ public:
         }
         delete [] this->data;
         this->data = tmp;
+        this->curr_size = re_size;
         return;
     }
     
@@ -342,6 +343,7 @@ public:
         }
         delete [] this->data;
         this->data = tmp;
+        this->curr_size = re_size;
         return;
     }
     
