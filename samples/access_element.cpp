@@ -14,9 +14,6 @@
  * Use front() to access the 1st element ...
  * The 1st element is 0
  * =========================================
- * Use tail() to access the last element ...
- * The last element is 4
- * =========================================
  * Use back to access the last element ...
  * The last element is 4
  * =========================================
@@ -46,10 +43,6 @@ int main() {
 
     std::cout << "Use front() to access the 1st element ..." << std::endl;
     std::cout << "The 1st element is " << test.front() << std::endl;
-    std::cout << "=========================================" << std::endl;
-
-    std::cout << "Use tail() to access the last element ..." << std::endl;
-    std::cout << "The last element is " << test.tail() << std::endl;
     std::cout << "=========================================" << std::endl;
 
     std::cout << "Use back to access the last element ..." << std::endl;
