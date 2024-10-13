@@ -9,6 +9,7 @@
  * NotEmpty:  1
  * Capacity:  64
  * ==================================
+ * After running clear() ...
  * [ null ]
  * Size:      0
  * IsEmpty:   1
@@ -31,6 +32,7 @@ int main() {
     std::cout << "==================================" << std::endl;
     
     test.clear();
+    std::cout << "After running clear() ..." << std::endl;
     std::cout << test << std::endl;
     std::cout << "Size:      " << test.size() << std::endl;
     std::cout << "IsEmpty:   " << (bool)test.empty() << std::endl;
