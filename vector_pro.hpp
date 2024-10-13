@@ -1,15 +1,10 @@
 # pragma once
 
-# ifndef null
-# define null 0
-# endif
-
-# include <cstdint>
 # include <limits>
-# include <stdio.h>
 # include <iostream>
-# include <string.h>
-# include <exception>
+# include "vector_pro_exception.hpp"
+# include "vector_pro_iter.hpp"
+
 # include <vector>
 
 # if __SIZEOF_POINTER__ == 4
@@ -26,91 +21,6 @@
 
 # ifndef VECTOR_PRO
 # define VECTOR_PRO 1
-
-class vector_pro_exception: public std::exception {
-private:
-    char *str = null;
-public:
-    vector_pro_exception(const char *_str) {
-        this->str = strdup(_str);
-    }
-    
-    ~vector_pro_exception() override {
-        if (this->str)  delete [] this->str;
-        this->str = null;
-    }
-    
-    const char* what() const throw() override {
-        return this->str;
-    }
-};
-
-template <typename T>
-class iterator_pro {
-private:
-    T **data = null;
-    LEN_TYPE curr_pos = 0;
-public:
-    
-    iterator_pro() {
-        // Do Nothing
-    }
-
-    iterator_pro(T **source, LEN_TYPE idx = 0) {
-        this->data = source;
-        this->curr_pos = idx;
-    }
-    
-    LEN_TYPE get_idx() const {
-        return this->curr_pos;
-    }
-
-    T** const get_data() const {
-        return this->data;
-    }
-    
-    iterator_pro operator++() {
-        return iterator_pro(this->data, this->curr_pos + 1);
-    }
-
-    iterator_pro operator++(int) {
-        iterator_pro<T> ret(this->data, this->curr_pos);
-        this->curr_pos++;
-        return ret;
-    }
-    
-    iterator_pro operator--() {
-        return iterator_pro(this->data, this->curr_pos - 1);
-    }
-
-    iterator_pro operator--(int) {
-        iterator_pro<T> ret(this->data, this->curr_pos);
-        this->curr_pos--;
-        return ret;
-    }
-
-    iterator_pro operator+(const int step) {
-        iterator_pro<T> ret(this->data, this->curr_pos + step);
-        return ret;
-    }
-
-    iterator_pro operator-(const int step) {
-        iterator_pro<T> ret(this->data, this->curr_pos - step);
-        return ret;
-    }
-
-    bool operator==(const iterator_pro<T>& another) const {
-        return ((this->data == another.get_data()) && (this->curr_pos == another.get_idx()));
-    }
-
-    bool operator!=(const iterator_pro<T>& another) const {
-        return ((this->data != another.get_data()) || (this->curr_pos != another.get_idx()));
-    }
-
-    T& operator*() {
-        return *(this->data[curr_pos]);
-    }
-};
 
 template <typename T>
 class vector_pro {
@@ -442,6 +352,8 @@ public:
         return ret;
     }
             
+    // Insert methods
+    
     void insert(LEN_TYPE idx, const T& target) {
         if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
         if (idx < 0)  throw vector_pro_exception("Illegal index.");
@@ -511,6 +423,8 @@ public:
         this->data_len += n;
     }
 
+    // Erase methods
+    
     void erase(LEN_TYPE target) {
         if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (target >= this->data_len) throw vector_pro_exception("Illegal index.");
@@ -584,7 +498,24 @@ public:
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
     }
+
+    void reverse() {
+        LEN_TYPE head = 0, last = this->data_len - 1;
+        while (head < last) {
+            T *tmp = this->data[head];
+            this->data[head] = this->data[last];
+            this->data[last] = tmp;
+            head++;
+            last--;
+        }
+    }
     
+    void merge(const vector_pro<T> &another) {
+        for (auto iter = another.begin(); iter != another.end(); iter++) {
+            this->push(*iter);
+        }
+    }
+
     void clear() {
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
             delete this->data[idx];
@@ -592,6 +523,8 @@ public:
         this->data_len = 0;
     }
 
+    // Built-in find method
+    
     LEN_TYPE find(const T& target, int(compare2)(const T &, const T &), LEN_TYPE from = 0, LEN_TYPE include_to = -1) const {
         if (this->data_len <= 0) return -1;
 
@@ -642,6 +575,8 @@ public:
         return -1;
     }
     
+    // Built-in tim sort
+    
     void sort(int(compare2)(const T &, const T &)) {
         if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         const int RUN = 32;
@@ -686,6 +621,8 @@ public:
         }
     }
     
+    // Print methods
+    
     void print(void(print)(T&)) const {
         printf("[ ");
         for (auto idx = 0; idx < this->data_len; idx++) {
@@ -724,18 +661,38 @@ public:
         return output;            
     }
     
-    void merge(const vector_pro<T> &another) {
-        for (auto iter = another.begin(); iter != another.end(); iter++) {
-            this->push(*iter);
-        }
-    }
-
+    // Iterators
+    
     iterator_pro<T> begin() {
         return iterator_pro<T>(this->data);
     }
 
     iterator_pro<T> end() {
         return iterator_pro<T>(this->data, this->data_len);
+    }
+
+    iterator_pro<T> rbegin() {
+        return iterator_pro<T>(this->data, this->data_len - 1, true);
+    }
+
+    iterator_pro<T> rend() {
+        return iterator_pro<T>(this->data, -1, true);
+    }
+
+    const_iterator_pro<T> cbegin() {
+        return const_iterator_pro<T>(this->data);
+    }
+
+    const_iterator_pro<T> cend() {
+        return const_iterator_pro<T>(this->data, this->data_len);
+    }
+
+    const_iterator_pro<T> crbegin() {
+        return const_iterator_pro<T>(this->data, this->data_len - 1, true);
+    }
+
+    const_iterator_pro<T> crend() {
+        return const_iterator_pro<T>(this->data, -1, true);
     }
 };
 
