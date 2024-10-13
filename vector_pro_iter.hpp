@@ -6,9 +6,8 @@
 
 # include <cstdint>
 
-# ifndef VECTOR_PRO_ITER
-# define VECTOR_PRO_ITER 1
-
+# ifndef __LEN_TYPE
+# define __LEN_TYPE 1
 # if __SIZEOF_POINTER__ == 4
     typedef int32_t LEN_TYPE;
 # elif __SIZEOF_POINTER__ == 8
@@ -16,6 +15,10 @@
 # else
     typedef long int LEN_TYPE;
 # endif
+# endif
+
+# ifndef _ITERATOR_PRO_
+# define _ITERATOR_PRO_ 1
 
 template <typename T>
 class iterator_pro {
