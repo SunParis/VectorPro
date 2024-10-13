@@ -9,6 +9,10 @@ resize: clean
 	g++ ./samples/resize.cpp -o resize.out
 	./resize.out
 
+clear: clean
+	g++ ./samples/clear.cpp -o clear.out
+	./clear.out
+
 clean:
 	rm -f *.o
 	rm -f *.out
