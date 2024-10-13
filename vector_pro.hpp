@@ -200,10 +200,11 @@ public:
             return;
         }
         this->curr_size = ini_size;
-        this->data_len = 0;
-        for (auto idx = another.begin(); idx < another.data_len(); idx++) {
-            this->data[this->data_len] = new T(*idx);
-            this->data_len++;
+        this->data_len = another.size();
+        LEN_TYPE idx = 0;
+        for (auto iter = another.begin(); iter != another.end(); iter++) {
+            this->data[idx] = new T(*iter);
+            idx++;
         }
     }
 
@@ -226,7 +227,9 @@ public:
     }
 
     vector_pro(const T *arr, const LEN_TYPE len) {
+        if (arr == null)    throw vector_pro_exception("Target array can't be null.");
         LEN_TYPE ini_size = std::max<LEN_TYPE>(VECTOR_PRO_DEFAULT_SIZE, len);
+        
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
@@ -660,6 +663,7 @@ public:
             output << target.read_only(idx);
             if (idx < target.size() - 1)    output << ", ";
         }
+        if (target.size() == 0) output << "null";
         output << " ]";
         return output;            
     }
