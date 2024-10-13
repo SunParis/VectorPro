@@ -3,43 +3,16 @@
 # include "vector_pro.hpp"
 using namespace std;
 static int _data = 0;
-class A {
-public:
-    int data;
-    A() {
-        this->data = _data;
-        _data++;
-        //cout << this->data << " being created." << endl;
-    }
-    A(const A& ano) {
-        this->data = ano.data;
-        //cout << this->data << " being copied." << endl;
-    }
-    ~A() {
-        //cout << this->data << " being destroyed." << endl;
-    }
-    
-    friend ostream &operator<<( ostream &output, const A &target ) { 
-        output << target.data;
-        return output;            
-    }
-};
 
 int main() {
-    vector_pro<A> test;
-    A data[10];
-    for (auto idx = 0; idx < 10; idx++) {
-        test.push_back(data[idx]);
-    }
-    cout << test << endl;
-
-    test[5] = A();
-    for (auto iter = test.begin(); iter != test.end(); iter++) {
-        cout << *iter;
-    }
-    cout << endl;
-    
-    cout << test << endl;
+    int a[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    vector_pro<int> test1(a, 5);
+    vector_pro<int> test2(a + 5, 5);
+    cout << "Before: " << test1 << endl;
+    cout << "Before: " << test2 << endl;
+    test1.assign(test2.begin() + 2, test2.end() - 1);
+    cout << "After: " << test1 << endl;
+    cout << "After: " << test2 << endl;
     return 0;
 }
 
