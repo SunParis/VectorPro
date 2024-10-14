@@ -308,7 +308,8 @@ public:
     
     // Modifiers
     
-    void assign(LEN_TYPE num, T& target) {
+    void assign(LEN_TYPE num, const T& target) {
+        if (num <= 0)   throw vector_pro_exception("The first param (num) should gt 0.");
         for (LEN_TYPE idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = T(target);
@@ -319,9 +320,9 @@ public:
         }
     }
 
-    void assign(iterator_pro<T> from, iterator_pro<T> include_to) {
+    void assign(iterator_pro<T> from, iterator_pro<T> exclude_to) {
         LEN_TYPE idx = 0;
-        for (auto iter = from; ; iter++) {
+        for (auto iter = from; iter != exclude_to; iter++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = T(*iter);
             }
@@ -329,7 +330,6 @@ public:
                 this->push(*iter);
             }
             idx++;
-            if (iter == include_to) break;
         }
     }
 
@@ -357,8 +357,8 @@ public:
     
     T pop() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        T ret = T(*this->_data[this->data_len]);
-        delete [] this->_data[this->data_len];
+        T ret = T(*this->_data[this->data_len - 1]);
+        delete [] this->_data[this->data_len - 1];
         this->data_len -= 1;
         return ret;
     }
