@@ -29,6 +29,32 @@ push_pop: clean
 	g++ ./samples/push_pop.cpp -o push_pop.out
 	./push_pop.out
 
+insert: clean
+	g++ ./samples/insert.cpp -o insert.out
+	./insert.out
+
+emplace: clean
+	g++ ./samples/emplace.cpp -o emplace.out
+	./emplace.out
+
+erase: clean
+	g++ ./samples/erase.cpp -o erase.out
+	./erase.out
+
+swap: clean
+	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
+	./swap_merge_sort.out
+
+merge: clean
+	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
+	./swap_merge_sort.out
+
+sort: clean
+	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
+	./swap_merge_sort.out
+
+
+
 clean:
 	rm -f *.o
 	rm -f *.out

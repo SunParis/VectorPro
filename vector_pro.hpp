@@ -476,24 +476,25 @@ public:
         if (position < 0) throw vector_pro_exception("Out of range.");
         
         delete this->_data[position];
-        this->end -= 1;
-        for (LEN_TYPE i = position; i < this->end; i++) {
+        this->data_len -= 1;
+        for (LEN_TYPE i = position; i < this->data_len; i++) {
             this->_data[i] = this->_data[i + 1];
         }
         return position;
     }
 
-    LEN_TYPE erase(LEN_TYPE from, LEN_TYPE include_to) {
+    LEN_TYPE erase(LEN_TYPE from, LEN_TYPE exclude_to) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (from >= this->data_len || include_to >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (from < 0 || include_to < 0) throw vector_pro_exception("Out of range.");
-        if (from >= include_to) throw vector_pro_exception("Out of range.");
+        if (from >= this->data_len || exclude_to > this->data_len) throw vector_pro_exception("Out of range.");
+        if (from < 0 || exclude_to < 0) throw vector_pro_exception("Out of range.");
+        if (from >= exclude_to) throw vector_pro_exception("Out of range.");
         
-        for (LEN_TYPE i = from; i < this->end; i++) {
-            if (i <= include_to) {
+        this->data_len -= (exclude_to - from);
+        for (LEN_TYPE i = from; i < this->data_len; i++) {
+            if (i < exclude_to) {
                 delete this->_data[i];
             }
-            this->_data[i] = this->_data[include_to - from + 1 + i];
+            this->_data[i] = this->_data[exclude_to - from + i];
         }
         return from;
     }
@@ -506,33 +507,29 @@ public:
         
         LEN_TYPE idx = position.get_idx();
         delete this->_data[idx];
-        this->end -= 1;
-        for (LEN_TYPE i = idx; i < this->end; i++) {
+        this->data_len -= 1;
+        for (LEN_TYPE i = idx; i < this->data_len; i++) {
             this->_data[i] = this->_data[i + 1];
         }
         return iterator_pro<T>(this->_data, idx);
     }
 
-    iterator_pro<T> erase(const_iterator_pro<T> from, const_iterator_pro<T> include_to) {
+    iterator_pro<T> erase(const_iterator_pro<T> from, const_iterator_pro<T> exclude_to) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
-        if (include_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
-        if (from.get_idx() >= this->data_len || include_to.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (from.get_idx() < 0 || include_to.get_idx() < 0) throw vector_pro_exception("Out of range.");
-        if (from.get_idx() > include_to.get_idx()) throw vector_pro_exception("Out of range.");
+        if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (from.get_idx() >= this->data_len || exclude_to.get_idx() > this->data_len) throw vector_pro_exception("Out of range.");
+        if (from.get_idx() < 0 || exclude_to.get_idx() < 0) throw vector_pro_exception("Out of range.");
+        if (from.get_idx() > exclude_to.get_idx()) throw vector_pro_exception("Out of range.");
                 
         LEN_TYPE from_idx = from.get_idx();
-        LEN_TYPE to_idx = include_to.get_idx();
-        if (from_idx > to_idx) {
-            LEN_TYPE tmp = from_idx;
-            from_idx = to_idx;
-            to_idx = tmp;
-        }
-        for (LEN_TYPE i = from_idx; i < this->end; i++) {
-            if (i <= to_idx) {
+        LEN_TYPE to_idx = exclude_to.get_idx();
+        this->data_len -= (to_idx - from_idx);
+        for (LEN_TYPE i = from_idx; i < this->data_len; i++) {
+            if (i < to_idx) {
                 delete this->_data[i];
             }
-            this->_data[i] = this->_data[to_idx - from_idx + i + 1];
+            this->_data[i] = this->_data[to_idx - from_idx + i];
         }
         return iterator_pro<T>(this->_data, from_idx);
     }
@@ -548,7 +545,7 @@ public:
     }
 
     void swap(vector_pro<T> &another) {
-        std::swap(this->_data, another.data);
+        std::swap(this->_data, another._data);
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
     }
@@ -565,7 +562,7 @@ public:
     }
     
     void merge(const vector_pro<T> &another) {
-        for (auto iter = another.begin(); iter != another.end(); iter++) {
+        for (auto iter = another.cbegin(); iter != another.cend(); iter++) {
             this->push(*iter);
         }
     }
