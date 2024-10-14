@@ -2,27 +2,29 @@
 
 # include <limits>
 # include <iostream>
+# include <vector>
+
 # include "vector_pro_exception.hpp"
 # include "vector_pro_iter.hpp"
 
-# include <vector>
-
 # ifndef __LEN_TYPE
-# define __LEN_TYPE 1
-# if __SIZEOF_POINTER__ == 4
-    typedef int32_t LEN_TYPE;
-# elif __SIZEOF_POINTER__ == 8
-    typedef int64_t LEN_TYPE;
-# else
-    typedef long int LEN_TYPE;
-# endif
+    # define __LEN_TYPE 1
+    # if __SIZEOF_POINTER__ == 4
+        typedef int32_t LEN_TYPE;
+    # elif __SIZEOF_POINTER__ == 8
+        typedef int64_t LEN_TYPE;
+    # else
+        typedef long int LEN_TYPE;
+    # endif
 # endif
 
 # ifndef VECTOR_PRO_DEFAULT_SIZE
-# define VECTOR_PRO_DEFAULT_SIZE 64
+    # define VECTOR_PRO_DEFAULT_SIZE 64
 # endif
 
+
 # ifndef VECTOR_PRO
+
 # define VECTOR_PRO 1
 
 template <typename T>
@@ -193,11 +195,11 @@ public:
     
     // Capacity
     
-    LEN_TYPE size() const {
+    LEN_TYPE size() const noexcept {
         return this->data_len;
     }
     
-    size_t max_size() const {
+    size_t max_size() const noexcept {
         return std::numeric_limits<LEN_TYPE>::max();
     }
     
@@ -269,17 +271,21 @@ public:
     T& operator[](LEN_TYPE idx) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (idx < 0) throw vector_pro_exception("Out of range.");
+        
         return *(this->_data[idx]);
     }
     
     T& at(const LEN_TYPE idx) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (idx < 0) throw vector_pro_exception("Out of range.");
+
         return *(this->_data[idx]);
     }
 
     T *data() {
-        throw vector_pro_exception("Vector_pro doesn't support this operation yet and in the near future.");
+        throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybet in the near future ?)");
         return null;
     }
 
@@ -296,6 +302,7 @@ public:
     const T& read_only(LEN_TYPE idx) const {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (idx < 0) throw vector_pro_exception("Out of range.");
         return *(this->_data[idx]);
     }
     
@@ -432,6 +439,7 @@ public:
 
     LEN_TYPE emplace(LEN_TYPE position, const T& target) {
         if (position > this->data_len)    throw vector_pro_exception("Out of range.");
+        if (position < 0)    throw vector_pro_exception("Out of range.");
         if (position == this->data_len) {
             this->push(target);
             return position;
@@ -445,6 +453,7 @@ public:
     iterator_pro<T> emplace(const_iterator_pro<T> position, const T& target) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() == this->data_len) {
             this->push(target);
             return (this->end() - 1);
