@@ -20,13 +20,15 @@ public:
 
 int main() {
     vector_pro<A> test;
+    vector_pro<A> test2;
     for (int i = 0; i < 10; i++)    test.push_back(A());
-    auto iter = test.rbegin();
-    auto iter2 = const_iterator_pro<A>(iter);
-    for ( ;iter2 != test.crend(); iter2++) {
-        cout << *iter2 << ",";
-    }
-    cout << endl;
+    for (int i = 0; i < 10; i++)    test2.push_back(A());
+    cout << test << endl;
+    cout << test2 << endl;
+    test = test2;
+    test2.clear();
+    cout << test << endl;
+    cout << test2 << endl;
     return 0;
 }
 

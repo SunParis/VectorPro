@@ -30,14 +30,14 @@ class vector_pro {
 protected:
     LEN_TYPE curr_size = 0;
     LEN_TYPE data_len = 0;
-    T **data = null;
+    T **_data = null;
     
     void insertionSort(LEN_TYPE left, LEN_TYPE right, int(compare2)(const T &, const T &)) {
-        T **arr = this->data;
+        T **arr = this->_data;
         for (LEN_TYPE i = left + 1; i <= right; i++) {
             T *temp = arr[i];
             LEN_TYPE j = i - 1;
-            while (j >= left && compare2(*(this->data[j]), *temp) > 0) {
+            while (j >= left && compare2(*(this->_data[j]), *temp) > 0) {
                 arr[j + 1] = arr[j];
                 j--;
             }
@@ -46,7 +46,7 @@ protected:
     }
 
     void mergesort(LEN_TYPE l, LEN_TYPE m, LEN_TYPE r, int(compare2)(const T &, const T &)) {
-        T **arr = this->data;
+        T **arr = this->_data;
         LEN_TYPE len1 = m - l + 1, len2 = r - m;
         T **left = new T*[len1];
         T **right = new T*[len2];
@@ -92,8 +92,8 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->data = new T* [ini_size];
-        if (this->data == null) {
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
         }
@@ -107,8 +107,8 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->data = new T* [ini_size];
-        if (this->data == null) {
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
         }
@@ -116,7 +116,7 @@ public:
         this->data_len = another.size();
         LEN_TYPE idx = 0;
         for (auto iter = another.begin(); iter != another.end(); iter++) {
-            this->data[idx] = new T(*iter);
+            this->_data[idx] = new T(*iter);
             idx++;
         }
     }
@@ -127,15 +127,15 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->data = new T* [ini_size];
-        if (this->data == null) {
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
         }
         this->curr_size = ini_size;
         this->data_len = another.data_len;
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            this->data[idx] = new T(another.read_only(idx));
+            this->_data[idx] = new T(another.read_only(idx));
         }
     }
 
@@ -147,15 +147,15 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->data = new T* [ini_size];
-        if (this->data == null) {
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
         }
         this->curr_size = ini_size;
         this->data_len = len;
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            this->data[idx] = new T(arr[idx]);
+            this->_data[idx] = new T(arr[idx]);
         }
     }
 
@@ -165,28 +165,28 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->data = new T* [ini_size];
-        if (this->data == null) {
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
         }
         this->curr_size = ini_size;
         this->data_len = len;
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            this->data[idx] = new T(arr);
+            this->_data[idx] = new T(arr);
         }
     }
     
     ~vector_pro() {
-        if (this->data != null) {
+        if (this->_data != null) {
             if (this->data_len > 0) {
                 for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-                    delete this->data[idx];
+                    delete this->_data[idx];
                 }
                 this->data_len = 0;
             }
-            delete [] this->data;
-            this->data = null;
+            delete [] this->_data;
+            this->_data = null;
             this->curr_size = 0;
         }
     }
@@ -214,29 +214,29 @@ public:
         }
         if (re_size < this->curr_size) {
             for (LEN_TYPE idx = re_size; idx < this->data_len; idx++) {
-                delete this->data[idx];
+                delete this->_data[idx];
             }
             this->data_len = re_size;
         }
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            tmp[idx] = this->data[idx];
+            tmp[idx] = this->_data[idx];
         }
-        delete [] this->data;
-        this->data = tmp;
+        delete [] this->_data;
+        this->_data = tmp;
         this->curr_size = re_size;
         return;
     }
     
-    LEN_TYPE capacity() const {
+    LEN_TYPE capacity() const noexcept {
         return this->curr_size;
     }
 
-    bool empty() const {
+    bool empty() const noexcept {
         if (this->data_len == 0) return true;
         return false;
     }
 
-    bool not_empty() const {
+    bool not_empty() const noexcept {
         return !(this->empty());
     }
     
@@ -252,10 +252,10 @@ public:
             return;
         }
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            tmp[idx] = this->data[idx];
+            tmp[idx] = this->_data[idx];
         }
-        delete [] this->data;
-        this->data = tmp;
+        delete [] this->_data;
+        this->_data = tmp;
         this->curr_size = re_size;
         return;
     }
@@ -267,30 +267,36 @@ public:
     // Element access
 
     T& operator[](LEN_TYPE idx) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Illegal index.");
-        return *(this->data[idx]);
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        return *(this->_data[idx]);
     }
     
     T& at(const LEN_TYPE idx) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Illegal index.");
-        return *(this->data[idx]);
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        return *(this->_data[idx]);
+    }
+
+    T *data() {
+        throw vector_pro_exception("Vector_pro doesn't support this operation yet and in the near future.");
+        return null;
     }
 
     T& front() {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        return *(this->data[0]);
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        return *(this->_data[0]);
     }
 
     T& back() {
-        return this->tail();
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        return *(this->_data[this->data_len - 1]);
     }
     
     const T& read_only(LEN_TYPE idx) const {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Illegal index.");
-        return *(this->data[idx]);
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
+        return *(this->_data[idx]);
     }
     
     // Modifiers
@@ -298,7 +304,7 @@ public:
     void assign(LEN_TYPE num, T& target) {
         for (LEN_TYPE idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
-                *this->data[idx] = T(target);
+                *this->_data[idx] = T(target);
             }
             else {
                 this->push(target);
@@ -310,7 +316,7 @@ public:
         LEN_TYPE idx = 0;
         for (auto iter = from; ; iter++) {
             if (idx < this->data_len) {
-                *this->data[idx] = T(*iter);
+                *this->_data[idx] = T(*iter);
             }
             else {
                 this->push(*iter);
@@ -332,72 +338,75 @@ public:
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing was done.");
         }        
-        this->data[this->data_len] = tmp;
+        this->_data[this->data_len] = tmp;
         this->data_len += 1;
     }
     
     void pop_back() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         this->data_len--;
-        delete this->data[this->data_len];
+        delete this->_data[this->data_len];
     }
     
     T pop() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        T ret = T(*this->data[this->data_len]);
-        delete [] this->data[this->data_len];
+        T ret = T(*this->_data[this->data_len]);
+        delete [] this->_data[this->data_len];
         this->data_len -= 1;
         return ret;
     }
             
     // Insert methods
     
-    void insert(LEN_TYPE idx, const T& target) {
-        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
-        if (idx < 0)  throw vector_pro_exception("Illegal index.");
+    LEN_TYPE insert(LEN_TYPE position, const T& target) {
+        if (position > this->data_len)  throw vector_pro_exception("Out of range");
+        if (position < 0)  throw vector_pro_exception("Out of range");
         
         if (this->data_len == this->curr_size) {
             this->resize(this->curr_size * 2);
         }
         T *tmp = new T(target);
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing was done.");
+            throw vector_pro_exception("Out of memory, nothing done.");
         }
 
-        for (LEN_TYPE i = this->data_len; i > idx; i--) {
-            this->data[i] = this->data[i - 1];
+        for (LEN_TYPE i = this->data_len; i > position; i--) {
+            this->_data[i] = this->_data[i - 1];
         }
-        this->data[idx] = tmp;
-        this->data_len += 1;     
+        this->_data[position] = tmp;
+        this->data_len += 1;
+        return position;
     }
 
-    void insert(LEN_TYPE idx, LEN_TYPE n, const T& target) {
-        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
-        if (idx < 0)  throw vector_pro_exception("Illegal index.");
-        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
+    iterator_pro<T> insert(const_iterator_pro<T> position, const T& target) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
         
-        if (this->data_len + n >= this->curr_size) {
-            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+        if (this->data_len == this->curr_size) {
+            this->resize(this->curr_size * 2);
+        }
+        T *tmp = new T(target);
+        if (tmp == null) {
+            throw vector_pro_exception("Out of memory, nothing done.");
         }
 
-        for (LEN_TYPE i = this->data_len + n - 1; i >= idx + n; i--) {
-            this->data[i] = this->data[i - n];
+        LEN_TYPE idx = position.get_idx();
+        for (LEN_TYPE i = this->data_len; i > idx; i--) {
+            this->_data[i] = this->_data[i - 1];
         }
-        for (LEN_TYPE i = idx + n - 1; i >= idx; i--) {
-            this->data[i] = new T(target);
-            if (this->data[i] == null) {
-                throw vector_pro_exception("Out of memory.");
-            }
-        }        
-
-        this->data_len += n;
+        this->_data[idx] = tmp;
+        this->data_len += 1;
+        return iterator_pro(this->_data, idx);
     }
+    
+    iterator_pro<T> insert(const_iterator_pro<T> position, const_iterator_pro<T> from, const_iterator_pro<T> exclude_to) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Position iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
 
-    void insert(LEN_TYPE idx, iterator_pro<T> from, iterator_pro<T> include_to) {
-        if (idx > this->data_len)  throw vector_pro_exception("Illegal index.");
-        if (idx < 0)  throw vector_pro_exception("Illegal index.");
-
-        LEN_TYPE n = include_to.get_idx() - from.get_idx() + 1;
+        LEN_TYPE n = exclude_to.get_idx() - from.get_idx();
+        LEN_TYPE idx = position.get_idx();
         if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
 
         if (this->data_len + n >= this->curr_size) {
@@ -405,92 +414,103 @@ public:
         }
 
         for (LEN_TYPE i = this->data_len + n - 1; i >= idx + n; i--) {
-            this->data[i] = this->data[i - n];
+            this->_data[i] = this->_data[i - n];
         }
         
         LEN_TYPE curr = idx;
-        for (auto iter = from; ; iter++) {
-            this->data[curr] = new T(*iter);
-            if (this->data[curr] == null) {
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->_data[curr] = new T(*iter);
+            if (this->_data[curr] == null) {
                 throw vector_pro_exception("Out of memory.");
             }
             curr++;
-            if (iter == include_to) break;
         }        
 
         this->data_len += n;
+        return iterator_pro(this->_data, idx);
+    }
+
+    LEN_TYPE emplace(LEN_TYPE position, const T& target) {
+        if (position > this->data_len)    throw vector_pro_exception("Out of range.");
+        if (position == this->data_len) {
+            this->push(target);
+            return position;
+        }
+        else {
+            this->insert(position, target);
+            return position;
+        }
     }
 
     iterator_pro<T> emplace(const_iterator_pro<T> position, const T& target) {
-        if (position.get_data() != this->data)  throw vector_pro_exception("Iterator not of this vector.");
-        if (position.get_idx() > this->data_len)    throw vector_pro_exception("Illegal index.");
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() == this->data_len) {
             this->push(target);
             return (this->end() - 1);
         }
         else {
             this->insert(position.get_idx(), target);
-            return iterator_pro<T>(this->data, position.get_idx());
+            return iterator_pro<T>(this->_data, position.get_idx());
         }
     }
 
-    iterator_pro<T> emplace_back(const T& target) {
+    void emplace_back(const T& target) {
         this->push(target);
-        return (this->end() - 1);
     }
 
     // Erase methods
     
-    LEN_TYPE erase(LEN_TYPE target) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (target >= this->data_len) throw vector_pro_exception("Illegal index.");
-        if (target < 0) throw vector_pro_exception("Illegal index.");
+    LEN_TYPE erase(LEN_TYPE position) {
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (position >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (position < 0) throw vector_pro_exception("Out of range.");
         
-        delete this->data[target];
+        delete this->_data[position];
         this->end -= 1;
-        for (LEN_TYPE i = target; i < this->end; i++) {
-            this->data[i] = this->data[i + 1];
+        for (LEN_TYPE i = position; i < this->end; i++) {
+            this->_data[i] = this->_data[i + 1];
         }
-        return target;
+        return position;
     }
 
     LEN_TYPE erase(LEN_TYPE from, LEN_TYPE include_to) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (from >= this->data_len || include_to >= this->data_len) throw vector_pro_exception("Illegal index.");
-        if (from < 0 || include_to < 0) throw vector_pro_exception("Illegal index.");
-        if (from >= include_to) throw vector_pro_exception("Illegal index.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (from >= this->data_len || include_to >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (from < 0 || include_to < 0) throw vector_pro_exception("Out of range.");
+        if (from >= include_to) throw vector_pro_exception("Out of range.");
         
         for (LEN_TYPE i = from; i < this->end; i++) {
             if (i <= include_to) {
-                delete this->data[i];
+                delete this->_data[i];
             }
-            this->data[i] = this->data[include_to - from + 1 + i];
+            this->_data[i] = this->_data[include_to - from + 1 + i];
         }
         return from;
     }
 
-    iterator_pro<T> erase(iterator_pro<T> target) {        
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (target.get_data() != this->data)   throw vector_pro_exception("Iterator not of this vector.");
-        if (target.get_idx() >= this->data_len) throw vector_pro_exception("Illegal index.");
-        if (target.get_idx() < 0) throw vector_pro_exception("Illegal index.");
+    iterator_pro<T> erase(const_iterator_pro<T> position) {        
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (position.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0) throw vector_pro_exception("Out of range.");
         
-        LEN_TYPE idx = target.get_idx();
-        delete this->data[idx];
+        LEN_TYPE idx = position.get_idx();
+        delete this->_data[idx];
         this->end -= 1;
         for (LEN_TYPE i = idx; i < this->end; i++) {
-            this->data[i] = this->data[i + 1];
+            this->_data[i] = this->_data[i + 1];
         }
-        return iterator_pro<T>(this->data, idx);
+        return iterator_pro<T>(this->_data, idx);
     }
 
-    iterator_pro<T> erase(iterator_pro<T> from, iterator_pro<T> include_to) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (from.get_data() != this->data)   throw vector_pro_exception("Iterator not of this vector.");
-        if (include_to.get_data() != this->data)   throw vector_pro_exception("Iterator not of this vector.");
-        if (from.get_idx() >= this->data_len || include_to.get_idx() >= this->data_len) throw vector_pro_exception("Illegal index.");
-        if (from.get_idx() < 0 || include_to.get_idx() < 0) throw vector_pro_exception("Illegal index.");
-        if (from.get_idx() > include_to.get_idx()) throw vector_pro_exception("Illegal index.");
+    iterator_pro<T> erase(const_iterator_pro<T> from, const_iterator_pro<T> include_to) {
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (include_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (from.get_idx() >= this->data_len || include_to.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (from.get_idx() < 0 || include_to.get_idx() < 0) throw vector_pro_exception("Out of range.");
+        if (from.get_idx() > include_to.get_idx()) throw vector_pro_exception("Out of range.");
                 
         LEN_TYPE from_idx = from.get_idx();
         LEN_TYPE to_idx = include_to.get_idx();
@@ -501,25 +521,25 @@ public:
         }
         for (LEN_TYPE i = from_idx; i < this->end; i++) {
             if (i <= to_idx) {
-                delete this->data[i];
+                delete this->_data[i];
             }
-            this->data[i] = this->data[to_idx - from_idx + i + 1];
+            this->_data[i] = this->_data[to_idx - from_idx + i + 1];
         }
-        return iterator_pro<T>(this->data, from_idx);
+        return iterator_pro<T>(this->_data, from_idx);
     }
         
     void swap(const LEN_TYPE idx1, const LEN_TYPE idx2) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx1 >= this->data_len || idx2 >= this->data_len) throw vector_pro_exception("Illegal index.");
-        if (idx1 < 0 || idx2 < 0) throw vector_pro_exception("Illegal index.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (idx1 >= this->data_len || idx2 >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (idx1 < 0 || idx2 < 0) throw vector_pro_exception("Out of range.");
         if (idx1 == idx2)   return;
-        T *tmp = this->data[idx1];
-        this->data[idx1] = this->data[idx2];
-        this->data[idx2] = tmp;
+        T *tmp = this->_data[idx1];
+        this->_data[idx1] = this->_data[idx2];
+        this->_data[idx2] = tmp;
     }
 
     void swap(vector_pro<T> &another) {
-        std::swap(this->data, another.data);
+        std::swap(this->_data, another.data);
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
     }
@@ -527,9 +547,9 @@ public:
     void reverse() {
         LEN_TYPE head = 0, last = this->data_len - 1;
         while (head < last) {
-            T *tmp = this->data[head];
-            this->data[head] = this->data[last];
-            this->data[last] = tmp;
+            T *tmp = this->_data[head];
+            this->_data[head] = this->_data[last];
+            this->_data[last] = tmp;
             head++;
             last--;
         }
@@ -541,9 +561,9 @@ public:
         }
     }
 
-    void clear() {
+    void clear() noexcept {
         for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
-            delete this->data[idx];
+            delete this->_data[idx];
         }
         this->data_len = 0;
     }
@@ -557,15 +577,15 @@ public:
         if (from == -1) include_to = this->data_len - 1;
         
         if (include_to < from) {
-            if (from >= this->data_len)   throw vector_pro_exception("Illegal index.");
+            if (from >= this->data_len)   throw vector_pro_exception("Out of range.");
             for (LEN_TYPE idx = include_to; idx <= from; idx--) {
-                if (compare2(*(this->data[idx]), target) == 0)  return idx;
+                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
             }
         }
         else {
-            if (include_to >= this->data_len)   throw vector_pro_exception("Illegal index.");
+            if (include_to >= this->data_len)   throw vector_pro_exception("Out of range.");
             for (LEN_TYPE idx = from; idx <= include_to; idx--) {
-                if (compare2(*(this->data[idx]), target) == 0)  return idx;
+                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
             }
         }
 
@@ -585,15 +605,15 @@ public:
         if (from == -1) include_to = this->data_len - 1;
         
         if (include_to < from) {
-            if (from >= this->data_len)   throw vector_pro_exception("Illegal index.");
+            if (from >= this->data_len)   throw vector_pro_exception("Out of range.");
             for (LEN_TYPE idx = include_to; idx <= from; idx--) {
-                if (compare2(*(this->data[idx]), target) == 0)  return idx;
+                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
             }
         }
         else {
-            if (include_to >= this->data_len)   throw vector_pro_exception("Illegal index.");
+            if (include_to >= this->data_len)   throw vector_pro_exception("Out of range.");
             for (LEN_TYPE idx = from; idx <= include_to; idx--) {
-                if (compare2(*(this->data[idx]), target) == 0)  return idx;
+                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
             }
         }
 
@@ -603,7 +623,7 @@ public:
     // Built-in tim sort
     
     void sort(int(compare2)(const T &, const T &)) {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         const int RUN = 32;
         LEN_TYPE n = this->size();
         for (LEN_TYPE i = 0; i < n; i += RUN)
@@ -621,7 +641,7 @@ public:
     }
 
     void sort() {
-        if (this->data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         
         auto lambda = [](const T & a, const T & b) -> int {
             if (a > b)  return 1;
@@ -651,7 +671,7 @@ public:
     void print(void(print)(T&)) const {
         printf("[ ");
         for (auto idx = 0; idx < this->data_len; idx++) {
-            print(*(this->data[idx]));
+            print(*(this->_data[idx]));
             if (idx < this->data_len - 1)    printf(", ");
         }
         printf(" ]");
@@ -669,7 +689,7 @@ public:
     void print() const {
         printf("[ ");
         for (auto idx = 0; idx < this->data_len; idx++) {
-            std::cout << *(this->data[idx]);
+            std::cout << *(this->_data[idx]);
             if (idx < this->data_len - 1)    printf(", ");
         }
         printf(" ]");
@@ -686,42 +706,58 @@ public:
         return output;            
     }
     
-    vector_pro<T>& operator= (const vector_pro<T>& another) {
-        return vector_pro<T>(another);
+    void operator= (const vector_pro<T>& another) {
+        this->clear();
+        delete this->_data;
+        LEN_TYPE ini_size = another.capacity();
+        if (ini_size <= 0) {
+            throw vector_pro_exception("Initial size of vector should gt 0.");
+            return;
+        }
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
+            throw vector_pro_exception("Out of memory, nothing done.");
+            return;
+        }
+        this->curr_size = ini_size;
+        this->data_len = another.data_len;
+        for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
+            this->_data[idx] = new T(another.read_only(idx));
+        }
     }
 
     // Iterators
     
-    iterator_pro<T> begin() {
-        return iterator_pro<T>(this->data);
+    iterator_pro<T> begin() noexcept {
+        return iterator_pro<T>(this->_data);
     }
 
-    iterator_pro<T> end() {
-        return iterator_pro<T>(this->data, this->data_len);
+    iterator_pro<T> end() noexcept {
+        return iterator_pro<T>(this->_data, this->data_len);
     }
 
-    iterator_pro<T> rbegin() {
-        return iterator_pro<T>(this->data, this->data_len - 1, true);
+    iterator_pro<T> rbegin() noexcept {
+        return iterator_pro<T>(this->_data, this->data_len - 1, true);
     }
 
-    iterator_pro<T> rend() {
-        return iterator_pro<T>(this->data, -1, true);
+    iterator_pro<T> rend() noexcept {
+        return iterator_pro<T>(this->_data, -1, true);
     }
 
-    const_iterator_pro<T> cbegin() {
-        return const_iterator_pro<T>(this->data);
+    const_iterator_pro<T> cbegin() const noexcept {
+        return const_iterator_pro<T>(this->_data);
     }
 
-    const_iterator_pro<T> cend() {
-        return const_iterator_pro<T>(this->data, this->data_len);
+    const_iterator_pro<T> cend() const noexcept {
+        return const_iterator_pro<T>(this->_data, this->data_len);
     }
 
-    const_iterator_pro<T> crbegin() {
-        return const_iterator_pro<T>(this->data, this->data_len - 1, true);
+    const_iterator_pro<T> crbegin() const noexcept {
+        return const_iterator_pro<T>(this->_data, this->data_len - 1, true);
     }
 
-    const_iterator_pro<T> crend() {
-        return const_iterator_pro<T>(this->data, -1, true);
+    const_iterator_pro<T> crend() const noexcept {
+        return const_iterator_pro<T>(this->_data, -1, true);
     }
 };
 
