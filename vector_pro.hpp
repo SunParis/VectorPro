@@ -765,6 +765,17 @@ public:
     const_iterator_pro<T> crend() const noexcept {
         return const_iterator_pro<T>(this->_data, -1, true);
     }
+
+    // to_vector
+    std::vector<T> to_vector() {
+        std::vector<T> ret;
+        ret.reserve(this->data_len);
+        for (LEN_TYPE idx = 0; idx < this->data_len; idx++) {
+            ret.push_back(*this->_data[idx]);
+        }
+        return ret;
+    }
+
 };
 
 # endif
