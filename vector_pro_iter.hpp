@@ -7,14 +7,14 @@
 # include <cstdint>
 
 # ifndef __LEN_TYPE
-# define __LEN_TYPE 1
-# if __SIZEOF_POINTER__ == 4
-    typedef int32_t LEN_TYPE;
-# elif __SIZEOF_POINTER__ == 8
-    typedef int64_t LEN_TYPE;
-# else
-    typedef long int LEN_TYPE;
-# endif
+    # define __LEN_TYPE 1
+    # if __SIZEOF_POINTER__ == 4
+        typedef int32_t size_type;
+    # elif __SIZEOF_POINTER__ == 8
+        typedef int64_t size_type;
+    # else
+        typedef long int size_type;
+    # endif
 # endif
 
 # ifndef _ITERATOR_PRO_
@@ -24,7 +24,7 @@ template <typename T>
 class iterator_pro {
 private:
     T **data = null;
-    LEN_TYPE curr_pos = 0;
+    size_type curr_pos = 0;
     bool reverse_flag = 0;
 public:
     
@@ -32,13 +32,13 @@ public:
         // Do Nothing
     }
 
-    iterator_pro(T **source, LEN_TYPE idx = 0, bool reverse_flag = 0) {
+    iterator_pro(T **source, size_type idx = 0, bool reverse_flag = 0) {
         this->data = source;
         this->curr_pos = idx;
         this->reverse_flag = reverse_flag;
     }
     
-    LEN_TYPE get_idx() const {
+    size_type get_idx() const {
         return this->curr_pos;
     }
 
@@ -125,7 +125,7 @@ template <typename T>
 class const_iterator_pro {
 private:
     T **data = null;
-    LEN_TYPE curr_pos = 0;
+    size_type curr_pos = 0;
     bool reverse_flag = 0;
 public:    
     const_iterator_pro() {
@@ -138,13 +138,13 @@ public:
         this->reverse_flag = another.get_reverse_flag();
     }
 
-    const_iterator_pro(T **source, LEN_TYPE idx = 0, bool reverse_flag = 0) {
+    const_iterator_pro(T **source, size_type idx = 0, bool reverse_flag = 0) {
         this->data = source;
         this->curr_pos = idx;
         this->reverse_flag = reverse_flag;
     }
     
-    LEN_TYPE get_idx() const {
+    size_type get_idx() const {
         return this->curr_pos;
     }
 
