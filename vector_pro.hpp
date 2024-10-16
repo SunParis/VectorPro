@@ -103,8 +103,8 @@ public:
         this->data_len = 0;
     }
     
-    vector_pro(const std::vector<value_type> &another) {
-        size_type ini_size = another.capacity();
+    vector_pro(const std::vector<value_type>& another) {
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
@@ -123,8 +123,8 @@ public:
         }
     }
 
-    vector_pro(const std::initializer_list<value_type> &another) {
-        size_type ini_size = another.size();
+    vector_pro(const std::initializer_list<value_type>& another) {
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.size());
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
@@ -143,8 +143,8 @@ public:
         }
     }
 
-    vector_pro(const vector_pro<value_type> &another) {
-        size_type ini_size = another.capacity();
+    vector_pro(const vector_pro<value_type>& another) {
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
@@ -159,6 +159,12 @@ public:
         for (size_type idx = 0; idx < this->data_len; idx++) {
             this->_data[idx] = new value_type(another.read_only(idx));
         }
+    }
+
+    vector_pro(vector_pro<value_type>&& another) {
+        std::swap(this->_data, another._data);
+        std::swap(this->data_len, another.data_len);
+        std::swap(this->curr_size, another.curr_size);
     }
 
     vector_pro(const value_type *arr, const size_type len) {
@@ -181,7 +187,7 @@ public:
         }
     }
 
-    vector_pro(const size_type len, const value_type& arr) {
+    vector_pro(const size_type len, const value_type& val) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
@@ -195,7 +201,30 @@ public:
         this->curr_size = ini_size;
         this->data_len = len;
         for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new value_type(arr);
+            this->_data[idx] = new value_type(val);
+        }
+    }
+
+    vector_pro(const_iterator_pro<value_type>from, const_iterator_pro<value_type>exclude_to) {
+        if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Iterator not of same vector.");
+        size_type input_len = std::max<size_type>(exclude_to.get_idx() - from.get_idx(), from.get_idx() - exclude_to.get_idx());
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, input_len);
+        
+        if (ini_size <= 0) {
+            throw vector_pro_exception("Initial size of vector should gt 0.");
+            return;
+        }
+        this->_data = new value_type* [ini_size];
+        if (this->_data == null) {
+            throw vector_pro_exception("Out of memory, nothing done.");
+            return;
+        }
+        this->curr_size = ini_size;
+        this->data_len = input_len;
+        size_type idx = 0;
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->_data[idx] = new value_type(*iter);
+            idx++;
         }
     }
     

@@ -1,34 +1,43 @@
-# include "../vector_pro.hpp"
+// constructing vectors
+#include <iostream>
+#include "../vector_pro.hpp"
 
-/*
- * Filepath: ./samples/create.cpp
- * Output0: [ null ]
- * Output1: [ 100, 100, 100, 100, 100 ]
- * Output2: [ 100, 100, 100, 100, 100 ]
- * Output3: [ 100, 100, 100, 100, 100, 100, 100 ]
- * Output4: [ 100, 100, 100, 100, 100 ]
-*/
+/**
+ * Output:
+ * The contents of fifth are: [ 100, 100, 100, 100 ]
+ * While in fourth will be: [ null ]
+ */
 
-int main() {
-    
-    std::cout << "Filepath: ./samples/create.cpp" << std::endl;
-    
-    vector_pro<int> test0;
-    std::cout << "Output0: " << test0 << std::endl;
-    
-    vector_pro<int> test1(5, 100);
-    std::cout << "Output1: " << test1 << std::endl;
-    
-    vector_pro<int> test2(test1);
-    std::cout << "Output2: " << test2 << std::endl;
+int main () {
+  // constructors used in the same order as described above:
+  
+  // empty vector_pro of ints
+  vector_pro<int> first;     
 
-    std::vector<int> classic_vector(7, 100);
-    vector_pro<int> test3(classic_vector);
-    std::cout << "Output3: " << test3 << std::endl;
+  // four ints with value 100
+  vector_pro<int> second (4,100);                       
+  
+  // iterating through second
+  vector_pro<int> third (second.begin(),second.end());  
+  
+  // a copy of third
+  vector_pro<int> fourth (third);
 
-    const int int_array[] = {100, 100, 100, 100, 100};
-    vector_pro<int> test4(int_array, std::size(int_array));
-    std::cout << "Output4: " << test4 << std::endl;
+  // a `move` from fourth
+  vector_pro<int> fifth (std::move(fourth));
+  std::cout << "The contents of fifth are: " << fifth << std::endl;
+  std::cout << "While in fourth will be: " << fourth << std::endl;
+  
+  // a copy from std::vector
+  std::vector<int> myints = {1, 2, 3, 4, 5};
+  vector_pro<int> sixth (myints);
+  
+  // a copy from initializer list
+  vector_pro<int> seventh = {1, 2, 3, 4, 5};
 
-    return 0;
+  // a copy from initializer list
+  int arr[5] = {0, 1, 2, 3, 4};
+  vector_pro<int> eighth (arr, 5);
+
+  return 0;
 }
