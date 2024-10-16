@@ -1,58 +1,31 @@
-# include "../vector_pro.hpp"
+// vector_pro assign
+#include <iostream>
+#include "../vector_pro.hpp"
 
-/*
- * Filepath: ./samples/assign.cpp
- * =========================================
- * test  ini: [ null ]
- * test2 ini: [ null ]
- * =========================================
- * Use assign(...) to initial...
- * Running assign(5, 777)
- * Before: [ null ]
- * After: [ 777, 777, 777, 777, 777 ]
- * =========================================
- * Use assign(...) to modify...
- * Running assign(2, 666)
- * Before: [ 777, 777, 777, 777, 777 ]
- * After: [ 666, 666, 777, 777, 777 ]
- * =========================================
- * Another way to use assign(...) ...
- * Running test2.assign(test.begin() + 1, test.end() - 1)
- * Before: [ null ]
- * After: [ 666, 777, 777 ]
- * =========================================
-*/
+/**
+ * Output:
+ * Size of first: 7
+ * Size of second: 5
+ * Size of third: 3
+ */
 
-int main() {
-    
-    std::cout << "Filepath: ./samples/assign.cpp" << std::endl;
-    std::cout << "=========================================" << std::endl;
+int main ()
+{
+  vector_pro<int> first;
+  vector_pro<int> second;
+  vector_pro<int> third;
 
-    vector_pro<int> test, test2;
-    std::cout << "test  ini: " << test << std::endl;
-    std::cout << "test2 ini: " << test2 << std::endl;
-    std::cout << "=========================================" << std::endl;
-    
-    std::cout << "Use assign(...) to initial..." << std::endl;
-    std::cout << "Running assign(5, 777)" << std::endl;
-    std::cout << "Before: " << test << std::endl;
-    test.assign(5, 777);
-    std::cout << "After: " << test << std::endl;
-    std::cout << "=========================================" << std::endl;
+  first.assign (7,100);             // 7 ints with a value of 100
 
-    std::cout << "Use assign(...) to modify..." << std::endl;
-    std::cout << "Running assign(2, 666)" << std::endl;
-    std::cout << "Before: " << test << std::endl;
-    test.assign(2, 666);
-    std::cout << "After: " << test << std::endl;
-    std::cout << "=========================================" << std::endl;
+  iterator_pro<int> it;
+  it=first.begin()+1;
 
-    std::cout << "Another way to use assign(...) ..." << std::endl;
-    std::cout << "Running test2.assign(test.begin() + 1, test.end() - 1)" << std::endl;
-    std::cout << "Before: " << test2 << std::endl;
-    test2.assign(test.begin() + 1, test.end() - 1);
-    std::cout << "After: " << test2 << std::endl;
-    std::cout << "=========================================" << std::endl;
+  second.assign (it,first.end()-1); // the 5 central values of first
 
-    return 0;
+  third.assign ({1, 2, 3});   // assigning from array.
+
+  std::cout << "Size of first: " << int (first.size()) << '\n';
+  std::cout << "Size of second: " << int (second.size()) << '\n';
+  std::cout << "Size of third: " << int (third.size()) << '\n';
+  return 0;
 }

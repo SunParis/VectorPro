@@ -1,44 +1,33 @@
-# include "../vector_pro.hpp"
+// clearing vectors
+#include <iostream>
+#include "../vector_pro.hpp"
 
-/*
- * Filepath: ./samples/clear.cpp
- * ==================================
- * [ 100, 100, 100, 100, 100 ]
- * Size:      5
- * IsEmpty:   0
- * NotEmpty:  1
- * Capacity:  64
- * ==================================
- * After running clear() ...
- * [ null ]
- * Size:      0
- * IsEmpty:   1
- * NotEmpty:  0
- * Capacity:  64
- * ==================================
-*/
+/**
+ * Output:
+ * myvector contains: 100 200 300
+ * myvector contains: 1101 2202
+ */
 
-int main() {
-    
-    std::cout << "Filepath: ./samples/clear.cpp" << std::endl;
-    std::cout << "==================================" << std::endl;
+int main ()
+{
+  vector_pro<int> myvector;
+  myvector.push_back (100);
+  myvector.push_back (200);
+  myvector.push_back (300);
 
-    vector_pro<int> test(5, 100);
-    std::cout << test << std::endl;
-    std::cout << "Size:      " << test.size() << std::endl;
-    std::cout << "IsEmpty:   " << (bool)test.empty() << std::endl;
-    std::cout << "NotEmpty:  " << (bool)test.not_empty() << std::endl;
-    std::cout << "Capacity:  " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
-    
-    test.clear();
-    std::cout << "After running clear() ..." << std::endl;
-    std::cout << test << std::endl;
-    std::cout << "Size:      " << test.size() << std::endl;
-    std::cout << "IsEmpty:   " << (bool)test.empty() << std::endl;
-    std::cout << "NotEmpty:  " << (bool)test.not_empty() << std::endl;
-    std::cout << "Capacity:  " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
+  std::cout << "myvector contains:";
+  for (unsigned i=0; i<myvector.size(); i++)
+    std::cout << ' ' << myvector[i];
+  std::cout << '\n';
 
-    return 0;
+  myvector.clear();
+  myvector.push_back (1101);
+  myvector.push_back (2202);
+
+  std::cout << "myvector contains:";
+  for (unsigned i=0; i<myvector.size(); i++)
+    std::cout << ' ' << myvector[i];
+  std::cout << '\n';
+
+  return 0;
 }

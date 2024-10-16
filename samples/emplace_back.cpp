@@ -1,19 +1,18 @@
-// vector_pro::emplace
+// vector_pro::emplace_back
 #include <iostream>
 #include "../vector_pro.hpp"
 
 /**
  * Output:
- * myvector contains: 10 200 100 20 30 300
+ * myvector contains: 10 20 30 100 200
  */
 
 int main ()
 {
   vector_pro<int> myvector = {10,20,30};
 
-  auto it = myvector.emplace ( myvector.begin()+1, 100 );
-  myvector.emplace ( it, 200 );
-  myvector.emplace ( myvector.end(), 300 );
+  myvector.emplace_back (100);
+  myvector.emplace_back (200);
 
   std::cout << "myvector contains:";
   for (auto& x: myvector)

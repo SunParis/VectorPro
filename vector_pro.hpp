@@ -334,7 +334,7 @@ public:
     }
 
     value_type *data() {
-        throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybet in the near future ?)");
+        throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybe in the near future ?)");
         return null;
     }
 
@@ -357,16 +357,20 @@ public:
     
     // Modifiers
     
-    void assign(size_type num, const value_type& target) {
+    void assign(size_type num, const value_type& val) {
         if (num <= 0)   throw vector_pro_exception("value_typehe first param (num) should gt 0.");
         for (size_type idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
-                *this->_data[idx] = value_type(target);
+                *this->_data[idx] = value_type(val);
             }
             else {
-                this->push(target);
+                this->push(val);
             }
         }
+        for (size_type idx = num; idx < this->data_len; idx++) {
+            delete this->_data[idx];
+        }
+        this->data_len = num;
     }
 
     void assign(iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) {
@@ -380,6 +384,27 @@ public:
             }
             idx++;
         }
+        for (size_type _idx = idx; _idx < this->data_len; _idx++) {
+            delete this->_data[_idx];
+        }
+        this->data_len = idx;
+    }
+
+    void assign(std::initializer_list<value_type> another) {
+        size_type idx = 0;
+        for (auto iter = another.begin(); iter != another.end(); iter++) {
+            if (idx < this->data_len) {
+                *this->_data[idx] = value_type(*iter);
+            }
+            else {
+                this->push(*iter);
+            }
+            idx++;
+        }
+        for (size_type _idx = idx; _idx < this->data_len; _idx++) {
+            delete this->_data[_idx];
+        }
+        this->data_len = idx;
     }
 
     void push_back(const value_type& target) {        
@@ -486,35 +511,35 @@ public:
         return iterator_pro(this->_data, idx);
     }
 
-    size_type emplace(size_type position, const value_type& target) {
+    size_type emplace(size_type position, const value_type& val) {
         if (position > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position < 0)    throw vector_pro_exception("Out of range.");
         if (position == this->data_len) {
-            this->push(target);
+            this->push(val);
             return position;
         }
         else {
-            this->insert(position, target);
+            this->insert(position, val);
             return position;
         }
     }
 
-    iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& target) {
+    iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& val) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() == this->data_len) {
-            this->push(target);
+            this->push(val);
             return (this->end() - 1);
         }
         else {
-            this->insert(position.get_idx(), target);
+            this->insert(position.get_idx(), val);
             return iterator_pro<value_type>(this->_data, position.get_idx());
         }
     }
 
-    void emplace_back(const value_type& target) {
-        this->push(target);
+    void emplace_back(const value_type& val) {
+        this->push(val);
     }
 
     // Erase methods
