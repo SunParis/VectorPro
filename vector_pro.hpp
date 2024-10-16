@@ -3,6 +3,7 @@
 # include <limits>
 # include <iostream>
 # include <vector>
+# include <initializer_list>
 
 # include "vector_pro_exception.hpp"
 # include "vector_pro_iter.hpp"
@@ -105,6 +106,26 @@ public:
     
     vector_pro(const std::vector<T> &another) {
         size_type ini_size = another.capacity();
+        if (ini_size <= 0) {
+            throw vector_pro_exception("Initial size of vector should gt 0.");
+            return;
+        }
+        this->_data = new T* [ini_size];
+        if (this->_data == null) {
+            throw vector_pro_exception("Out of memory, nothing done.");
+            return;
+        }
+        this->curr_size = ini_size;
+        this->data_len = another.size();
+        size_type idx = 0;
+        for (auto iter = another.begin(); iter != another.end(); iter++) {
+            this->_data[idx] = new T(*iter);
+            idx++;
+        }
+    }
+
+    vector_pro(const std::initializer_list<T> &another) {
+        size_type ini_size = another.size();
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;

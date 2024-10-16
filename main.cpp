@@ -51,7 +51,7 @@ int main() {
     auto classic_end_2 = std::clock();
     cout << "Ini time2:: " << build_time2 - classic_start_2 << endl;
     cout << "Time2 ::" << classic_end_2 - build_time2 << endl;
-    
+
     return 0;
 }
 
