@@ -36,7 +36,7 @@ public:
 
 int main() {
     
-    auto classic_start = std::clock();
+    /*auto classic_start = std::clock();
     vector<big_obj> test;
     auto build_time = std::clock();
     for (int i = 0; i < 100; i++)   test.push_back(big_obj());
@@ -51,7 +51,13 @@ int main() {
     auto classic_end_2 = std::clock();
     cout << "Ini time2:: " << build_time2 - classic_start_2 << endl;
     cout << "Time2 ::" << classic_end_2 - build_time2 << endl;
-
+    */
+    vector_pro<int> A, B;
+    A.push(10);
+    B.push(9);
+    A.swap(A.begin(), B.begin());
+    cout << A << endl;
+    cout << B << endl;
     return 0;
 }
 

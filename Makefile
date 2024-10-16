@@ -57,39 +57,69 @@ empty: clean
 	g++ ./samples/empty.cpp -o empty.out
 	./empty.out
 
-resize: clean
-	g++ ./samples/resize.cpp -o resize.out
-	./resize.out
+erase: clean
+	g++ ./samples/erase.cpp -o erase.out
+	./erase.out
 
-modify: clean
-	g++ ./samples/modify_element.cpp -o modify_element.out
-	./modify_element.out
-
-push_pop: clean
-	g++ ./samples/push_pop.cpp -o push_pop.out
-	./push_pop.out
+front: clean
+	g++ ./samples/front.cpp -o front.out
+	./front.out
 
 insert: clean
 	g++ ./samples/insert.cpp -o insert.out
 	./insert.out
 
-erase: clean
-	g++ ./samples/erase.cpp -o erase.out
-	./erase.out
+max_size: clean
+	g++ ./samples/max_size.cpp -o max_size.out
+	./max_size.out
+
+operator[]: clean
+	g++ ./samples/operator[].cpp -o operator[].out
+	./operator[].out
+
+operator_assign: clean
+	g++ ./samples/operator=.cpp -o operator=.out
+	./operator=.out
+
+pop_back: clean
+	g++ ./samples/pop_back.cpp -o pop_back.out
+	./pop_back.out
+
+push: clean
+	g++ ./samples/push.cpp -o push.out
+	./push.out
+
+push_back: clean
+	g++ ./samples/push_back.cpp -o push_back.out
+	./push_back.out
+
+rbegin: clean
+	g++ ./samples/rbegin.cpp -o rbegin.out
+	./rbegin.out
+
+rend: clean
+	g++ ./samples/rend.cpp -o rend.out
+	./rend.out
+
+reserve: clean
+	g++ ./samples/reserve.cpp -o reserve.out
+	./reserve.out
+
+resize: clean
+	g++ ./samples/resize.cpp -o resize.out
+	./resize.out
+
+shrink_to_fit: clean
+	g++ ./samples/shrink_to_fit.cpp -o shrink_to_fit.out
+	./shrink_to_fit.out
+
+size: clean
+	g++ ./samples/size.cpp -o size.out
+	./size.out
 
 swap: clean
-	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
-	./swap_merge_sort.out
-
-merge: clean
-	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
-	./swap_merge_sort.out
-
-sort: clean
-	g++ ./samples/swap_merge_sort.cpp -o swap_merge_sort.out
-	./swap_merge_sort.out
-
-
+	g++ ./samples/swap.cpp -o swap.out
+	./swap.out
 
 clean:
 	rm -f *.o

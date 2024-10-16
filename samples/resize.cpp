@@ -1,68 +1,27 @@
-# include "../vector_pro.hpp"
+// resizing vector_pro
+#include <iostream>
+#include "../vector_pro.hpp"
 
-/*
- * Filepath: ./samples/resize.cpp
- * ==================================
- * [ 100, 100, 100, 100, 100 ]
- * Size:     5
- * MaxSize:  9223372036854775807
- * Capacity: 64
- * ==================================
- * After running reserve(70) ...
- * [ 100, 100, 100, 100, 100 ]
- * Size:     5
- * MaxSize:  9223372036854775807
- * Capacity: 70
- * ==================================
- * After running shrink_to_fit() ...
- * [ 100, 100, 100, 100, 100 ]
- * Size:     5
- * MaxSize:  9223372036854775807
- * Capacity: 5
- * ==================================
- * After running resize(3) ...
- * [ 100, 100, 100 ]
- * Size:     3
- * MaxSize:  9223372036854775807
- * Capacity: 3
- * ==================================
-*/
+/**
+ * Output:
+ * myvector contains: 1 2 3 4 5 100 100 100
+ */
 
-int main() {
-    
-    std::cout << "Filepath: ./samples/resize.cpp" << std::endl;
-    std::cout << "==================================" << std::endl;
+int main ()
+{
+  vector_pro<int> myvector;
 
-    vector_pro<int> test(5, 100);
-    std::cout << test << std::endl;
-    std::cout << "Size:     " << test.size() << std::endl;
-    std::cout << "MaxSize:  " << test.max_size() << std::endl;
-    std::cout << "Capacity: " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
-    
-    test.reserve(70);
-    std::cout << "After running reserve(70) ..." << std::endl;
-    std::cout << test << std::endl;
-    std::cout << "Size:     " << test.size() << std::endl;
-    std::cout << "MaxSize:  " << test.max_size() << std::endl;
-    std::cout << "Capacity: " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
+  // set some initial content:
+  for (int i=1;i<10;i++) myvector.push_back(i);
 
-    test.shrink_to_fit();
-    std::cout << "After running shrink_to_fit() ..." << std::endl;
-    std::cout << test << std::endl;
-    std::cout << "Size:     " << test.size() << std::endl;
-    std::cout << "MaxSize:  " << test.max_size() << std::endl;
-    std::cout << "Capacity: " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
+  myvector.resize(5);
+  myvector.resize(8,100);
+  myvector.resize(12);
 
-    test.resize(3);
-    std::cout << "After running resize(3) ..." << std::endl;
-    std::cout << test << std::endl;
-    std::cout << "Size:     " << test.size() << std::endl;
-    std::cout << "MaxSize:  " << test.max_size() << std::endl;
-    std::cout << "Capacity: " << test.capacity() << std::endl;
-    std::cout << "==================================" << std::endl;
+  std::cout << "myvector contains:";
+  for (int i=0;i<myvector.size();i++)
+    std::cout << ' ' << myvector[i];
+  std::cout << '\n';
 
-    return 0;
+  return 0;
 }
