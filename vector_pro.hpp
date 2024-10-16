@@ -27,7 +27,7 @@
 
 # define VECTOR_PRO 1
 
-template <typename T>
+template <class T>
 class vector_pro {
 protected:
     size_type curr_size = 0;

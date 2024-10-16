@@ -20,7 +20,7 @@
 # ifndef _ITERATOR_PRO_
 # define _ITERATOR_PRO_ 1
 
-template <typename T>
+template <class T>
 class iterator_pro {
 private:
     T **data = null;
@@ -121,7 +121,7 @@ public:
     }
 };
 
-template <typename T>
+template <class T>
 class const_iterator_pro {
 private:
     T **data = null;
