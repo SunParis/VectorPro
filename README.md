@@ -1,17 +1,21 @@
 # VectorPro
-~~This is a refined version of skip list, which can efficiently access element in vector.  
-The code is under development.~~ 
 
-## How to test this code
+See [VectorPro](https://sunparis.github.io/VectorPro.site/)
 
+## How to use this code
+
+Clone the files to you project, add
+```c++
+# include "vector_pro"
 ```
-make
-./main.out
-```
-
+to your code, and at last don't forget to compile&run it.
 
 ## Contact
+
 If you have any questions or comments, feel free to contact us via github issue.
 
 ## Reference
+
 [std::vector](https://cplusplus.com/reference/vector/vector/)
+
+[VectorPro](https://sunparis.github.io/VectorPro.site/)

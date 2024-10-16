@@ -6,8 +6,8 @@
 
 # include <cstdint>
 
-# ifndef __LEN_TYPE
-    # define __LEN_TYPE 1
+# ifndef ___SIZE_TYPE___
+    # define ___SIZE_TYPE___ 1
     # if __SIZEOF_POINTER__ == 4
         typedef int32_t size_type;
     # elif __SIZEOF_POINTER__ == 8
@@ -20,10 +20,10 @@
 # ifndef _ITERATOR_PRO_
 # define _ITERATOR_PRO_ 1
 
-template <class T>
+template <class value_type>
 class iterator_pro {
 private:
-    T **data = null;
+    value_type **data = null;
     size_type curr_pos = 0;
     bool reverse_flag = 0;
 public:
@@ -32,7 +32,7 @@ public:
         // Do Nothing
     }
 
-    iterator_pro(T **source, size_type idx = 0, bool reverse_flag = 0) {
+    iterator_pro(value_type **source, size_type idx = 0, bool reverse_flag = 0) {
         this->data = source;
         this->curr_pos = idx;
         this->reverse_flag = reverse_flag;
@@ -42,7 +42,7 @@ public:
         return this->curr_pos;
     }
 
-    T** const get_data() const {
+    value_type** const get_data() const {
         return this->data;
     }
 
@@ -60,7 +60,7 @@ public:
     }
 
     iterator_pro operator++(int) {
-        iterator_pro<T> ret(this->data, this->curr_pos);
+        iterator_pro<value_type> ret(this->data, this->curr_pos);
         
         if (this->reverse_flag == 1)
             this->curr_pos--;
@@ -80,7 +80,7 @@ public:
     }
 
     iterator_pro operator--(int) {
-        iterator_pro<T> ret(this->data, this->curr_pos);
+        iterator_pro<value_type> ret(this->data, this->curr_pos);
         
         if (this->reverse_flag == 1)
             this->curr_pos++;
@@ -92,39 +92,39 @@ public:
 
     iterator_pro operator+(const int step) {
         if (this->reverse_flag == 0) {
-            iterator_pro<T> ret(this->data, this->curr_pos + step);
+            iterator_pro<value_type> ret(this->data, this->curr_pos + step);
             return ret;
         }
-        iterator_pro<T> ret(this->data, this->curr_pos - step);
+        iterator_pro<value_type> ret(this->data, this->curr_pos - step);
         return ret;
     }
 
     iterator_pro operator-(const int step) {
         if (this->reverse_flag == 0) {
-            iterator_pro<T> ret(this->data, this->curr_pos - step);
+            iterator_pro<value_type> ret(this->data, this->curr_pos - step);
             return ret;
         }
-        iterator_pro<T> ret(this->data, this->curr_pos + step);
+        iterator_pro<value_type> ret(this->data, this->curr_pos + step);
         return ret;
     }
 
-    bool operator==(const iterator_pro<T>& another) const {
+    bool operator==(const iterator_pro<value_type>& another) const {
         return ((this->data == another.get_data()) && (this->curr_pos == another.get_idx()));
     }
 
-    bool operator!=(const iterator_pro<T>& another) const {
+    bool operator!=(const iterator_pro<value_type>& another) const {
         return ((this->data != another.get_data()) || (this->curr_pos != another.get_idx()));
     }
 
-    T& operator*() {
+    value_type& operator*() {
         return *(this->data[curr_pos]);
     }
 };
 
-template <class T>
+template <class value_type>
 class const_iterator_pro {
 private:
-    T **data = null;
+    value_type **data = null;
     size_type curr_pos = 0;
     bool reverse_flag = 0;
 public:    
@@ -132,13 +132,13 @@ public:
         // Do Nothing
     }
 
-    const_iterator_pro(const iterator_pro<T>& another) {
+    const_iterator_pro(const iterator_pro<value_type>& another) {
         this->data = another.get_data();
         this->curr_pos = another.get_idx();
         this->reverse_flag = another.get_reverse_flag();
     }
 
-    const_iterator_pro(T **source, size_type idx = 0, bool reverse_flag = 0) {
+    const_iterator_pro(value_type **source, size_type idx = 0, bool reverse_flag = 0) {
         this->data = source;
         this->curr_pos = idx;
         this->reverse_flag = reverse_flag;
@@ -148,7 +148,7 @@ public:
         return this->curr_pos;
     }
 
-    T** const get_data() const {
+    value_type** const get_data() const {
         return this->data;
     }
     
@@ -162,7 +162,7 @@ public:
     }
 
     const_iterator_pro operator++(int) {
-        const_iterator_pro<T> ret(this->data, this->curr_pos);
+        const_iterator_pro<value_type> ret(this->data, this->curr_pos);
         
         if (this->reverse_flag == 1)
             this->curr_pos--;
@@ -182,7 +182,7 @@ public:
     }
 
     const_iterator_pro operator--(int) {
-        const_iterator_pro<T> ret(this->data, this->curr_pos);
+        const_iterator_pro<value_type> ret(this->data, this->curr_pos);
         
         if (this->reverse_flag == 1)
             this->curr_pos++;
@@ -194,31 +194,31 @@ public:
 
     const_iterator_pro operator+(const int step) {
         if (this->reverse_flag == 0) {
-            const_iterator_pro<T> ret(this->data, this->curr_pos + step);
+            const_iterator_pro<value_type> ret(this->data, this->curr_pos + step);
             return ret;
         }
-        const_iterator_pro<T> ret(this->data, this->curr_pos - step);
+        const_iterator_pro<value_type> ret(this->data, this->curr_pos - step);
         return ret;
     }
 
     const_iterator_pro operator-(const int step) {
         if (this->reverse_flag == 0) {
-            const_iterator_pro<T> ret(this->data, this->curr_pos - step);
+            const_iterator_pro<value_type> ret(this->data, this->curr_pos - step);
             return ret;
         }
-        const_iterator_pro<T> ret(this->data, this->curr_pos + step);
+        const_iterator_pro<value_type> ret(this->data, this->curr_pos + step);
         return ret;
     }
 
-    bool operator==(const const_iterator_pro<T>& another) const {
+    bool operator==(const const_iterator_pro<value_type>& another) const {
         return ((this->data == another.get_data()) && (this->curr_pos == another.get_idx()));
     }
 
-    bool operator!=(const const_iterator_pro<T>& another) const {
+    bool operator!=(const const_iterator_pro<value_type>& another) const {
         return ((this->data != another.get_data()) || (this->curr_pos != another.get_idx()));
     }
 
-    const T& operator*() {
+    const value_type& operator*() {
         return *(this->data[curr_pos]);
     }
 };

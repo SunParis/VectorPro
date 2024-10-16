@@ -5,11 +5,8 @@
 # include <vector>
 # include <initializer_list>
 
-# include "vector_pro_exception.hpp"
-# include "vector_pro_iter.hpp"
-
-# ifndef __LEN_TYPE
-    # define __LEN_TYPE 1
+# ifndef ___SIZE_TYPE___
+    # define ___SIZE_TYPE___ 1
     # if __SIZEOF_POINTER__ == 4
         typedef int32_t size_type;
     # elif __SIZEOF_POINTER__ == 8
@@ -23,22 +20,24 @@
     # define VECTOR_PRO_DEFAULT_SIZE 64
 # endif
 
+# include "vector_pro_exception.hpp"
+# include "vector_pro_iter.hpp"
 
 # ifndef VECTOR_PRO
 
 # define VECTOR_PRO 1
 
-template <class T>
+template <class value_type>
 class vector_pro {
 protected:
     size_type curr_size = 0;
     size_type data_len = 0;
-    T **_data = null;
+    value_type **_data = null;
     
-    void insertionSort(size_type left, size_type right, int(compare2)(const T &, const T &)) {
-        T **arr = this->_data;
+    void insertionSort(size_type left, size_type right, int(compare2)(const value_type &, const value_type &)) {
+        value_type **arr = this->_data;
         for (size_type i = left + 1; i <= right; i++) {
-            T *temp = arr[i];
+            value_type *temp = arr[i];
             size_type j = i - 1;
             while (j >= left && compare2(*(this->_data[j]), *temp) > 0) {
                 arr[j + 1] = arr[j];
@@ -48,11 +47,11 @@ protected:
         }
     }
 
-    void mergesort(size_type l, size_type m, size_type r, int(compare2)(const T &, const T &)) {
-        T **arr = this->_data;
+    void mergesort(size_type l, size_type m, size_type r, int(compare2)(const value_type &, const value_type &)) {
+        value_type **arr = this->_data;
         size_type len1 = m - l + 1, len2 = r - m;
-        T **left = new T*[len1];
-        T **right = new T*[len2];
+        value_type **left = new value_type*[len1];
+        value_type **right = new value_type*[len2];
     
         for (size_type i = 0; i < len1; i++)
             left[i] = arr[l + i];
@@ -95,7 +94,7 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -104,13 +103,13 @@ public:
         this->data_len = 0;
     }
     
-    vector_pro(const std::vector<T> &another) {
+    vector_pro(const std::vector<value_type> &another) {
         size_type ini_size = another.capacity();
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -119,18 +118,18 @@ public:
         this->data_len = another.size();
         size_type idx = 0;
         for (auto iter = another.begin(); iter != another.end(); iter++) {
-            this->_data[idx] = new T(*iter);
+            this->_data[idx] = new value_type(*iter);
             idx++;
         }
     }
 
-    vector_pro(const std::initializer_list<T> &another) {
+    vector_pro(const std::initializer_list<value_type> &another) {
         size_type ini_size = another.size();
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -139,18 +138,18 @@ public:
         this->data_len = another.size();
         size_type idx = 0;
         for (auto iter = another.begin(); iter != another.end(); iter++) {
-            this->_data[idx] = new T(*iter);
+            this->_data[idx] = new value_type(*iter);
             idx++;
         }
     }
 
-    vector_pro(const vector_pro<T> &another) {
+    vector_pro(const vector_pro<value_type> &another) {
         size_type ini_size = another.capacity();
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -158,11 +157,11 @@ public:
         this->curr_size = ini_size;
         this->data_len = another.data_len;
         for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new T(another.read_only(idx));
+            this->_data[idx] = new value_type(another.read_only(idx));
         }
     }
 
-    vector_pro(const T *arr, const size_type len) {
+    vector_pro(const value_type *arr, const size_type len) {
         if (arr == null)    throw vector_pro_exception("Target array can't be null.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         
@@ -170,7 +169,7 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -178,17 +177,17 @@ public:
         this->curr_size = ini_size;
         this->data_len = len;
         for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new T(arr[idx]);
+            this->_data[idx] = new value_type(arr[idx]);
         }
     }
 
-    vector_pro(const size_type len, const T& arr) {
+    vector_pro(const size_type len, const value_type& arr) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         if (ini_size <= 0) {
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -196,7 +195,7 @@ public:
         this->curr_size = ini_size;
         this->data_len = len;
         for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new T(arr);
+            this->_data[idx] = new value_type(arr);
         }
     }
     
@@ -230,7 +229,7 @@ public:
             return;
         }
         if (re_size == this->curr_size) return;
-        T **tmp = new T*[re_size];
+        value_type **tmp = new value_type*[re_size];
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -269,7 +268,7 @@ public:
             return;
         }
         if (re_size < this->curr_size) return;
-        T **tmp = new T*[re_size];
+        value_type **tmp = new value_type*[re_size];
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -289,51 +288,51 @@ public:
 
     // Element access
 
-    T& operator[](size_type idx) {
+    value_type& operator[](size_type position) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (idx < 0) throw vector_pro_exception("Out of range.");
+        if (position >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (position < 0) throw vector_pro_exception("Out of range.");
         
-        return *(this->_data[idx]);
+        return *(this->_data[position]);
     }
     
-    T& at(const size_type idx) {
+    value_type& at(const size_type position) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (idx < 0) throw vector_pro_exception("Out of range.");
+        if (position >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (position < 0) throw vector_pro_exception("Out of range.");
 
-        return *(this->_data[idx]);
+        return *(this->_data[position]);
     }
 
-    T *data() {
+    value_type *data() {
         throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybet in the near future ?)");
         return null;
     }
 
-    T& front() {
+    value_type& front() {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         return *(this->_data[0]);
     }
 
-    T& back() {
+    value_type& back() {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         return *(this->_data[this->data_len - 1]);
     }
     
-    const T& read_only(size_type idx) const {
+    const value_type& read_only(size_type position) const {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (idx >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (idx < 0) throw vector_pro_exception("Out of range.");
-        return *(this->_data[idx]);
+        if (position >= this->data_len) throw vector_pro_exception("Out of range.");
+        if (position < 0) throw vector_pro_exception("Out of range.");
+        return *(this->_data[position]);
     }
     
     // Modifiers
     
-    void assign(size_type num, const T& target) {
-        if (num <= 0)   throw vector_pro_exception("The first param (num) should gt 0.");
+    void assign(size_type num, const value_type& target) {
+        if (num <= 0)   throw vector_pro_exception("value_typehe first param (num) should gt 0.");
         for (size_type idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
-                *this->_data[idx] = T(target);
+                *this->_data[idx] = value_type(target);
             }
             else {
                 this->push(target);
@@ -341,11 +340,11 @@ public:
         }
     }
 
-    void assign(iterator_pro<T> from, iterator_pro<T> exclude_to) {
+    void assign(iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) {
         size_type idx = 0;
         for (auto iter = from; iter != exclude_to; iter++) {
             if (idx < this->data_len) {
-                *this->_data[idx] = T(*iter);
+                *this->_data[idx] = value_type(*iter);
             }
             else {
                 this->push(*iter);
@@ -354,15 +353,15 @@ public:
         }
     }
 
-    void push_back(const T& target) {        
+    void push_back(const value_type& target) {        
         this->push(target);
     }
 
-    void push(const T& target) {
+    void push(const value_type& target) {
         if (this->data_len == this->curr_size) {
             this->resize(this->curr_size * 2);
         }
-        T *tmp = new T(target);
+        value_type *tmp = new value_type(target);
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing was done.");
         }        
@@ -376,9 +375,9 @@ public:
         delete this->_data[this->data_len];
     }
     
-    T pop() {
+    value_type pop() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        T ret = T(*this->_data[this->data_len - 1]);
+        value_type ret = value_type(*this->_data[this->data_len - 1]);
         delete [] this->_data[this->data_len - 1];
         this->data_len -= 1;
         return ret;
@@ -386,14 +385,14 @@ public:
             
     // Insert methods
     
-    size_type insert(size_type position, const T& target) {
+    size_type insert(size_type position, const value_type& target) {
         if (position > this->data_len)  throw vector_pro_exception("Out of range");
         if (position < 0)  throw vector_pro_exception("Out of range");
         
         if (this->data_len == this->curr_size) {
             this->resize(this->curr_size * 2);
         }
-        T *tmp = new T(target);
+        value_type *tmp = new value_type(target);
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
         }
@@ -406,7 +405,7 @@ public:
         return position;
     }
 
-    iterator_pro<T> insert(const_iterator_pro<T> position, const T& target) {
+    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const value_type& target) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
@@ -414,7 +413,7 @@ public:
         if (this->data_len == this->curr_size) {
             this->resize(this->curr_size * 2);
         }
-        T *tmp = new T(target);
+        value_type *tmp = new value_type(target);
         if (tmp == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
         }
@@ -428,7 +427,7 @@ public:
         return iterator_pro(this->_data, idx);
     }
     
-    iterator_pro<T> insert(const_iterator_pro<T> position, const_iterator_pro<T> from, const_iterator_pro<T> exclude_to) {
+    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Position iterator not of this vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
@@ -447,7 +446,7 @@ public:
         
         size_type curr = idx;
         for (auto iter = from; iter != exclude_to; iter++) {
-            this->_data[curr] = new T(*iter);
+            this->_data[curr] = new value_type(*iter);
             if (this->_data[curr] == null) {
                 throw vector_pro_exception("Out of memory.");
             }
@@ -458,7 +457,7 @@ public:
         return iterator_pro(this->_data, idx);
     }
 
-    size_type emplace(size_type position, const T& target) {
+    size_type emplace(size_type position, const value_type& target) {
         if (position > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position < 0)    throw vector_pro_exception("Out of range.");
         if (position == this->data_len) {
@@ -471,7 +470,7 @@ public:
         }
     }
 
-    iterator_pro<T> emplace(const_iterator_pro<T> position, const T& target) {
+    iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& target) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
@@ -481,11 +480,11 @@ public:
         }
         else {
             this->insert(position.get_idx(), target);
-            return iterator_pro<T>(this->_data, position.get_idx());
+            return iterator_pro<value_type>(this->_data, position.get_idx());
         }
     }
 
-    void emplace_back(const T& target) {
+    void emplace_back(const value_type& target) {
         this->push(target);
     }
 
@@ -520,7 +519,7 @@ public:
         return from;
     }
 
-    iterator_pro<T> erase(const_iterator_pro<T> position) {        
+    iterator_pro<value_type> erase(const_iterator_pro<value_type> position) {        
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (position.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
@@ -532,10 +531,10 @@ public:
         for (size_type i = idx; i < this->data_len; i++) {
             this->_data[i] = this->_data[i + 1];
         }
-        return iterator_pro<T>(this->_data, idx);
+        return iterator_pro<value_type>(this->_data, idx);
     }
 
-    iterator_pro<T> erase(const_iterator_pro<T> from, const_iterator_pro<T> exclude_to) {
+    iterator_pro<value_type> erase(const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
         if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
@@ -552,7 +551,7 @@ public:
             }
             this->_data[i] = this->_data[to_idx - from_idx + i];
         }
-        return iterator_pro<T>(this->_data, from_idx);
+        return iterator_pro<value_type>(this->_data, from_idx);
     }
         
     void swap(const size_type idx1, const size_type idx2) {
@@ -560,12 +559,12 @@ public:
         if (idx1 >= this->data_len || idx2 >= this->data_len) throw vector_pro_exception("Out of range.");
         if (idx1 < 0 || idx2 < 0) throw vector_pro_exception("Out of range.");
         if (idx1 == idx2)   return;
-        T *tmp = this->_data[idx1];
+        value_type *tmp = this->_data[idx1];
         this->_data[idx1] = this->_data[idx2];
         this->_data[idx2] = tmp;
     }
 
-    void swap(vector_pro<T> &another) {
+    void swap(vector_pro<value_type> &another) {
         std::swap(this->_data, another._data);
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
@@ -574,7 +573,7 @@ public:
     void reverse() {
         size_type head = 0, last = this->data_len - 1;
         while (head < last) {
-            T *tmp = this->_data[head];
+            value_type *tmp = this->_data[head];
             this->_data[head] = this->_data[last];
             this->_data[last] = tmp;
             head++;
@@ -582,7 +581,7 @@ public:
         }
     }
     
-    void merge(const vector_pro<T> &another) {
+    void merge(const vector_pro<value_type> &another) {
         for (auto iter = another.cbegin(); iter != another.cend(); iter++) {
             this->push(*iter);
         }
@@ -597,7 +596,7 @@ public:
 
     // Built-in find method
     
-    size_type find(const T& target, int(compare2)(const T &, const T &), size_type from = 0, size_type include_to = -1) const {
+    size_type find(const value_type& target, int(compare2)(const value_type &, const value_type &), size_type from = 0, size_type include_to = -1) const {
         if (this->data_len <= 0) return -1;
 
         if (include_to == -1) include_to = this->data_len - 1;
@@ -619,14 +618,14 @@ public:
         return -1;
     }
 
-    size_type find(const T& target, size_type from = 0, size_type include_to = -1) const {
+    size_type find(const value_type& target, size_type from = 0, size_type include_to = -1) const {
         if (this->data_len <= 0) return -1;
 
-        auto lambda = [](const T & a, const T & b) -> int {
+        auto lambda = [](const value_type & a, const value_type & b) -> int {
             if (a == b) return 1;
             return 0;
         };
-        int (*same2)(const T &, const T &) = lambda;
+        int (*same2)(const value_type &, const value_type &) = lambda;
         
         if (include_to == -1) include_to = this->data_len - 1;
         if (from == -1) include_to = this->data_len - 1;
@@ -649,7 +648,7 @@ public:
     
     // Built-in tim sort
     
-    void sort(int(compare2)(const T &, const T &)) {
+    void sort(int(compare2)(const value_type &, const value_type &)) {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         const int RUN = 32;
         size_type n = this->size();
@@ -670,12 +669,12 @@ public:
     void sort() {
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         
-        auto lambda = [](const T & a, const T & b) -> int {
+        auto lambda = [](const value_type & a, const value_type & b) -> int {
             if (a > b)  return 1;
             else if (a < b) return -1;
             return 0;
         };
-        int (*compare2)(const T &, const T &) = lambda;
+        int (*compare2)(const value_type &, const value_type &) = lambda;
         
         const int RUN = 32;
         size_type n = this->size();
@@ -695,7 +694,7 @@ public:
     
     // Print methods
     
-    void print(void(print)(T&)) const {
+    void print(void(print)(value_type&)) const {
         printf("[ ");
         for (auto idx = 0; idx < this->data_len; idx++) {
             print(*(this->_data[idx]));
@@ -722,7 +721,7 @@ public:
         printf(" ]");
     }
 
-    friend std::ostream& operator<<(std::ostream &output, const vector_pro<T>& target) { 
+    friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) { 
         output << "[ ";
         for (size_type idx = 0; idx < target.size(); idx++) {
             output << target.read_only(idx);
@@ -733,7 +732,7 @@ public:
         return output;            
     }
     
-    void operator= (const vector_pro<T>& another) {
+    void operator= (const vector_pro<value_type>& another) {
         this->clear();
         delete this->_data;
         size_type ini_size = another.capacity();
@@ -741,7 +740,7 @@ public:
             throw vector_pro_exception("Initial size of vector should gt 0.");
             return;
         }
-        this->_data = new T* [ini_size];
+        this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
             return;
@@ -749,47 +748,47 @@ public:
         this->curr_size = ini_size;
         this->data_len = another.data_len;
         for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new T(another.read_only(idx));
+            this->_data[idx] = new value_type(another.read_only(idx));
         }
     }
 
     // Iterators
     
-    iterator_pro<T> begin() noexcept {
-        return iterator_pro<T>(this->_data);
+    iterator_pro<value_type> begin() noexcept {
+        return iterator_pro<value_type>(this->_data);
     }
 
-    iterator_pro<T> end() noexcept {
-        return iterator_pro<T>(this->_data, this->data_len);
+    iterator_pro<value_type> end() noexcept {
+        return iterator_pro<value_type>(this->_data, this->data_len);
     }
 
-    iterator_pro<T> rbegin() noexcept {
-        return iterator_pro<T>(this->_data, this->data_len - 1, true);
+    iterator_pro<value_type> rbegin() noexcept {
+        return iterator_pro<value_type>(this->_data, this->data_len - 1, true);
     }
 
-    iterator_pro<T> rend() noexcept {
-        return iterator_pro<T>(this->_data, -1, true);
+    iterator_pro<value_type> rend() noexcept {
+        return iterator_pro<value_type>(this->_data, -1, true);
     }
 
-    const_iterator_pro<T> cbegin() const noexcept {
-        return const_iterator_pro<T>(this->_data);
+    const_iterator_pro<value_type> cbegin() const noexcept {
+        return const_iterator_pro<value_type>(this->_data);
     }
 
-    const_iterator_pro<T> cend() const noexcept {
-        return const_iterator_pro<T>(this->_data, this->data_len);
+    const_iterator_pro<value_type> cend() const noexcept {
+        return const_iterator_pro<value_type>(this->_data, this->data_len);
     }
 
-    const_iterator_pro<T> crbegin() const noexcept {
-        return const_iterator_pro<T>(this->_data, this->data_len - 1, true);
+    const_iterator_pro<value_type> crbegin() const noexcept {
+        return const_iterator_pro<value_type>(this->_data, this->data_len - 1, true);
     }
 
-    const_iterator_pro<T> crend() const noexcept {
-        return const_iterator_pro<T>(this->_data, -1, true);
+    const_iterator_pro<value_type> crend() const noexcept {
+        return const_iterator_pro<value_type>(this->_data, -1, true);
     }
 
     // to_vector
-    std::vector<T> to_vector() {
-        std::vector<T> ret;
+    std::vector<value_type> to_vector() {
+        std::vector<value_type> ret;
         ret.reserve(this->data_len);
         for (size_type idx = 0; idx < this->data_len; idx++) {
             ret.push_back(*this->_data[idx]);
