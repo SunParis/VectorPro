@@ -1,7 +1,9 @@
 
 # include <iostream>
+# include <vector>
+# include <any>
 # include <ctime>
-# include "vector_pro.hpp"
+# include "vector_pro.h"
 using namespace std;
 static int _data = 0;
 
@@ -36,7 +38,8 @@ public:
 
 int main() {
     
-    /*auto classic_start = std::clock();
+    /*
+    auto classic_start = std::clock();
     vector<big_obj> test;
     auto build_time = std::clock();
     for (int i = 0; i < 100; i++)   test.push_back(big_obj());
@@ -52,12 +55,12 @@ int main() {
     cout << "Ini time2:: " << build_time2 - classic_start_2 << endl;
     cout << "Time2 ::" << classic_end_2 - build_time2 << endl;
     */
-    vector_pro<int> A, B;
-    A.push(10);
-    B.push(9);
-    A.swap(A.begin(), B.begin());
-    cout << A << endl;
-    cout << B << endl;
+
+    vector_pro<int> test = {3, 4, 7, 1, 2, 9};
+    test.sort();
+    cout << test << endl;
+    cout << test.find(5) << endl;
+
     return 0;
 }
 

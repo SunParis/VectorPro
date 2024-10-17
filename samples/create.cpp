@@ -1,6 +1,6 @@
 // constructing vectors
 #include <iostream>
-#include "../vector_pro.hpp"
+#include "../vector_pro.h"
 
 /**
  * Output:

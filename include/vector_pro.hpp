@@ -23,9 +23,11 @@
 # include "vector_pro_exception.hpp"
 # include "vector_pro_iter.hpp"
 
-# ifndef VECTOR_PRO
+# ifndef __VECTOR_PRO__
 
-# define VECTOR_PRO 1
+# define __VECTOR_PRO__ 1
+
+# define _DOUBLE_(x) (x == 0 ? 1 : (2 * (std::size_t)x))
 
 template <class value_type>
 class vector_pro {
@@ -90,10 +92,11 @@ public:
     
     vector_pro() {
         size_type ini_size = VECTOR_PRO_DEFAULT_SIZE;
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -102,13 +105,14 @@ public:
         this->curr_size = ini_size;
         this->data_len = 0;
     }
-    
+            
     vector_pro(const std::vector<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -125,10 +129,11 @@ public:
 
     vector_pro(const std::initializer_list<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.size());
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -145,10 +150,11 @@ public:
 
     vector_pro(const vector_pro<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -156,12 +162,16 @@ public:
         }
         this->curr_size = ini_size;
         this->data_len = another.data_len;
-        for (size_type idx = 0; idx < this->data_len; idx++) {
-            this->_data[idx] = new value_type(another.read_only(idx));
+
+        size_type idx = 0;
+        for (auto citer = another.cbegin(); citer != another.cend(); citer++) {
+            this->_data[idx] = new value_type(*citer);
+            idx++;
         }
     }
 
     vector_pro(vector_pro<value_type>&& another) {
+        this->destroy();
         std::swap(this->_data, another._data);
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
@@ -171,10 +181,11 @@ public:
         if (arr == null)    throw vector_pro_exception("Target array can't be null.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -187,12 +198,29 @@ public:
         }
     }
 
-    vector_pro(const size_type len, const value_type& val) {
-        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+    vector_pro(const size_type len) {
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);;
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
+        this->_data = new value_type* [ini_size];
+        if (this->_data == null) {
+            throw vector_pro_exception("Out of memory, nothing done.");
+            return;
+        }
+        this->curr_size = ini_size;
+        this->data_len = 0;
+    }
+    
+    vector_pro(const size_type len, const value_type& val) {
+        size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
+            return;
+        }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -210,10 +238,11 @@ public:
         size_type input_len = std::max<size_type>(exclude_to.get_idx() - from.get_idx(), from.get_idx() - exclude_to.get_idx());
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, input_len);
         
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
+        this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
             throw vector_pro_exception("Out of memory, nothing done.");
@@ -229,17 +258,7 @@ public:
     }
     
     ~vector_pro() {
-        if (this->_data != null) {
-            if (this->data_len > 0) {
-                for (size_type idx = 0; idx < this->data_len; idx++) {
-                    delete this->_data[idx];
-                }
-                this->data_len = 0;
-            }
-            delete [] this->_data;
-            this->_data = null;
-            this->curr_size = 0;
-        }
+        this->destroy();
     }
     
     // Capacity
@@ -253,8 +272,8 @@ public:
     }
     
     void resize(const size_type re_size) {
-        if (re_size <= 0) {
-            throw vector_pro_exception("Resize val of vector should gt 0.");
+        if (re_size < 0) {
+            throw vector_pro_exception("Resize val of vector should geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
@@ -279,8 +298,8 @@ public:
     }
 
     void resize(const size_type re_size, const value_type& val) {
-        if (re_size <= 0) {
-            throw vector_pro_exception("Resize val of vector should gt 0.");
+        if (re_size < 0) {
+            throw vector_pro_exception("Resize val of vector should geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
@@ -326,8 +345,8 @@ public:
     }
     
     void reserve(const size_type re_size) {
-        if (re_size <= 0) {
-            throw vector_pro_exception("Re_size val of vector should gt 0.");
+        if (re_size < 0) {
+            throw vector_pro_exception("Re_size val of vector should geq 0.");
             return;
         }
         if (re_size < this->curr_size) return;
@@ -381,18 +400,11 @@ public:
         if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         return *(this->_data[this->data_len - 1]);
     }
-    
-    const value_type& read_only(size_type position) const {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
-        if (position >= this->data_len) throw vector_pro_exception("Out of range.");
-        if (position < 0) throw vector_pro_exception("Out of range.");
-        return *(this->_data[position]);
-    }
-    
+        
     // Modifiers
     
     void assign(size_type num, const value_type& val) {
-        if (num <= 0)   throw vector_pro_exception("value_typehe first param (num) should gt 0.");
+        if (num < 0)   throw vector_pro_exception("value_typehe first param (num) should geq 0.");
         for (size_type idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = value_type(val);
@@ -447,7 +459,7 @@ public:
 
     void push(const value_type& val) {
         if (this->data_len == this->curr_size) {
-            this->resize(this->curr_size * 2);
+            this->resize(_DOUBLE_(this->curr_size));
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
@@ -478,7 +490,7 @@ public:
         if (position < 0)  throw vector_pro_exception("Out of range");
         
         if (this->data_len == this->curr_size) {
-            this->resize(this->curr_size * 2);
+            this->resize(_DOUBLE_(this->curr_size));
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
@@ -499,7 +511,7 @@ public:
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
         
         if (this->data_len == this->curr_size) {
-            this->resize(this->curr_size * 2);
+            this->resize(_DOUBLE_(this->curr_size));
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
@@ -516,17 +528,17 @@ public:
     }
 
     iterator_pro<value_type> insert(const_iterator_pro<value_type> position, size_type num, const value_type& val) {
-        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
-        if (num <= 0)  throw vector_pro_exception("Number of insert target should be gt 0."); 
+        if (num == 0)   return iterator_pro(position);
+        if (num < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector."); 
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
         
         size_type n = num;
         size_type idx = position.get_idx();
-        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
 
         if (this->data_len + n >= this->curr_size) {
-            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
         }
 
         for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
@@ -546,15 +558,17 @@ public:
     
     iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Position iterator not of this vector.");
+        if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Target iterator not of same vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
 
         size_type n = exclude_to.get_idx() - from.get_idx();
         size_type idx = position.get_idx();
-        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
+        if (n == 0)   return iterator_pro(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
-            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
         }
 
         for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
@@ -581,10 +595,11 @@ public:
 
         size_type n = li.size();
         size_type idx = position.get_idx();
-        if (n <= 0)  throw vector_pro_exception("Number of insert target should be gt 0.");
+        if (n == 0)   return iterator_pro(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
-            this->resize(std::max(this->curr_size * 2, this->data_len + n));
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
         }
 
         for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
@@ -745,62 +760,111 @@ public:
         this->data_len = 0;
     }
 
+    void destroy() noexcept {
+        this->clear();
+        this->curr_size = 0;
+        if (this->data != null) {
+            delete [] this->_data;
+            this->_data = null;
+        }
+    }
+    
     // Built-in find method
     
-    size_type find(const value_type& target, int(compare2)(const value_type &, const value_type &), size_type from = 0, size_type include_to = -1) const {
+    size_type find(const value_type& target, int(compare2)(const value_type &, const value_type &), size_type from = 0, size_type exclude_to = -1) const {
         if (this->data_len <= 0) return -1;
 
-        if (include_to == -1) include_to = this->data_len - 1;
-        if (from == -1) include_to = this->data_len - 1;
+        if (exclude_to == -1) exclude_to = this->data_len - 1;
         
-        if (include_to < from) {
-            if (from >= this->data_len)   throw vector_pro_exception("Out of range.");
-            for (size_type idx = include_to; idx <= from; idx--) {
-                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
-            }
-        }
-        else {
-            if (include_to >= this->data_len)   throw vector_pro_exception("Out of range.");
-            for (size_type idx = from; idx <= include_to; idx--) {
-                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
-            }
+        for (size_type iter = from; iter != exclude_to; iter++) {
+            if (iter < 0) throw vector_pro_exception("Out of range.");
+            if (iter >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (compare2(*this->_data[iter], target) == 0)   return iter;
         }
 
         return -1;
     }
 
-    size_type find(const value_type& target, size_type from = 0, size_type include_to = -1) const {
+    iterator_pro<value_type> find(const value_type& target, int(compare2)(const value_type &, const value_type &), iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) const {
+        if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (this->data_len <= 0) return iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+        
+        for (auto iter = from; iter != exclude_to; iter++) {
+            if (iter.get_idx() < 0) throw vector_pro_exception("Out of range.");
+            if (iter.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (compare2(*iter, target) == 0)   return iterator_pro<value_type>(this->_data, iter.get_idx());
+        }
+
+        return iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+    }
+    
+    const_iterator_pro<value_type> find(const value_type& target, int(compare2)(const value_type &, const value_type &), const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) const {
+        if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (this->data_len <= 0) return const_iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+        
+        for (auto iter = from; iter != exclude_to; iter++) {
+            if (iter.get_idx() < 0) throw vector_pro_exception("Out of range.");
+            if (iter.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (compare2(*iter, target) == 0)   return const_iterator_pro<value_type>(this->_data, iter.get_idx());
+        }
+
+        return const_iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+    }
+
+    size_type find(const value_type& target, size_type from = 0, size_type exclude_to = -1) const {
         if (this->data_len <= 0) return -1;
 
-        auto lambda = [](const value_type & a, const value_type & b) -> int {
-            if (a == b) return 1;
-            return 0;
-        };
-        int (*same2)(const value_type &, const value_type &) = lambda;
+        if (exclude_to == -1) exclude_to = this->data_len - 1;
         
-        if (include_to == -1) include_to = this->data_len - 1;
-        if (from == -1) include_to = this->data_len - 1;
-        
-        if (include_to < from) {
-            if (from >= this->data_len)   throw vector_pro_exception("Out of range.");
-            for (size_type idx = include_to; idx <= from; idx--) {
-                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
-            }
-        }
-        else {
-            if (include_to >= this->data_len)   throw vector_pro_exception("Out of range.");
-            for (size_type idx = from; idx <= include_to; idx--) {
-                if (compare2(*(this->_data[idx]), target) == 0)  return idx;
-            }
+        for (size_type iter = from; iter != exclude_to; iter++) {
+            if (iter < 0) throw vector_pro_exception("Out of range.");
+            if (iter >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (*this->_data[iter] == target)   return iter;
         }
 
         return -1;
+    }
+
+    iterator_pro<value_type> find(const value_type& target, iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) const {
+        if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (this->data_len <= 0) return iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+        
+        for (auto iter = from; iter != exclude_to; iter++) {
+            if (iter.get_idx() < 0) throw vector_pro_exception("Out of range.");
+            if (iter.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (*iter == target)   return iterator_pro<value_type>(this->_data, iter.get_idx());
+        }
+
+        return iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+    }
+    
+    const_iterator_pro<value_type> find(const value_type& target, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) const {
+        if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        if (this->data_len <= 0) return const_iterator_pro<value_type>(this->_data, exclude_to.get_idx());
+        
+        for (auto iter = from; iter != exclude_to; iter++) {
+            if (iter.get_idx() < 0) throw vector_pro_exception("Out of range.");
+            if (iter.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
+            
+            if (*iter == target)   return const_iterator_pro<value_type>(this->_data, iter.get_idx());
+        }
+
+        return const_iterator_pro<value_type>(this->_data, exclude_to.get_idx());
     }
     
     // Built-in tim sort
     
     void sort(int(compare2)(const value_type &, const value_type &)) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) return;
         const int RUN = 32;
         size_type n = this->size();
         for (size_type i = 0; i < n; i += RUN)
@@ -818,14 +882,13 @@ public:
     }
 
     void sort() {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) return;
         
-        auto lambda = [](const value_type & a, const value_type & b) -> int {
+        int (*compare2)(const value_type &, const value_type &) = [](const value_type & a, const value_type & b) -> int {
             if (a > b)  return 1;
             else if (a < b) return -1;
             return 0;
         };
-        int (*compare2)(const value_type &, const value_type &) = lambda;
         
         const int RUN = 32;
         size_type n = this->size();
@@ -854,15 +917,6 @@ public:
         printf(" ]");
     }
 
-    void print(void(print)(void)) const {
-        printf("[ ");
-        for (auto idx = 0; idx < this->data_len; idx++) {
-            print();
-            if (idx < this->data_len - 1)    printf(", ");
-        }
-        printf(" ]");
-    }
-
     void print() const {
         printf("[ ");
         for (auto idx = 0; idx < this->data_len; idx++) {
@@ -874,9 +928,9 @@ public:
 
     friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) { 
         output << "[ ";
-        for (size_type idx = 0; idx < target.size(); idx++) {
-            output << target.read_only(idx);
-            if (idx < target.size() - 1)    output << ", ";
+        for (auto citer = target.cbegin(); citer != target.cend(); citer++) {
+            output << *citer;
+            if (citer.get_idx() < target.size() - 1)    output << ", ";
         }
         if (target.size() == 0) output << "null";
         output << " ]";
@@ -884,11 +938,10 @@ public:
     }
     
     void operator= (const vector_pro<value_type>& another) {
-        this->clear();
-        delete this->_data;
+        this->destroy();
         size_type ini_size = another.capacity();
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
@@ -906,22 +959,17 @@ public:
     }
 
     void operator= (vector_pro<value_type>&& another) {
-        this->clear();
-        delete this->_data;
-        this->_data = null;
-        this->data_len = 0;
-        this->curr_size = 0;
+        this->destroy();
         std::swap(this->_data, another._data);
         std::swap(this->data_len, another.data_len);
         std::swap(this->curr_size, another.curr_size);
     }
 
     void operator= (const std::vector<value_type>& another) {
-        this->clear();
-        delete this->_data;
+        this->destroy();
         size_type ini_size = another.capacity();
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
@@ -939,11 +987,10 @@ public:
     }
 
     void operator= (const std::initializer_list<value_type>& another) {
-        this->clear();
-        delete this->_data;
+        this->destroy();
         size_type ini_size = another.size();
-        if (ini_size <= 0) {
-            throw vector_pro_exception("Initial size of vector should gt 0.");
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
@@ -994,7 +1041,7 @@ public:
         return const_iterator_pro<value_type>(this->_data, -1, true);
     }
 
-    // to_vector
+    // to std::vector
     std::vector<value_type> to_vector() {
         std::vector<value_type> ret;
         ret.reserve(this->data_len);

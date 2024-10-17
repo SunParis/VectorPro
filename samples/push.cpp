@@ -1,6 +1,6 @@
 // vector::push_back/push
 #include <iostream>
-#include "../vector_pro.hpp"
+#include "../vector_pro.h"
 
 /**
  * The example uses push to add a new element to the vector each time a new integer is read.

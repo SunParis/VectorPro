@@ -1,6 +1,6 @@
 // vector_pro::operator=
 #include <iostream>
-#include "../vector_pro.hpp"
+#include "../vector_pro.h"
 
 /**
  * Output:

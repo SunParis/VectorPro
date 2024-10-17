@@ -1,5 +1,6 @@
-main:
+main: clean
 	g++ main.cpp -o main.out
+	./main.out
 
 create: clean
 	g++ ./samples/create.cpp -o create.out

@@ -1,6 +1,6 @@
 // vector_pro::shrink_to_fit
 #include <iostream>
-#include "../vector_pro.hpp"
+#include "../vector_pro.h"
 
 /**
  * Output:

@@ -31,6 +31,12 @@ public:
     iterator_pro() {
         // Do Nothing
     }
+    
+    iterator_pro(const iterator_pro<value_type>& another) {
+        this->data = another.get_data();
+        this->curr_pos = another.get_idx();
+        this->reverse_flag = another.get_reverse_flag();
+    }
 
     iterator_pro(value_type **source, size_type idx = 0, bool reverse_flag = 0) {
         this->data = source;
@@ -132,6 +138,12 @@ public:
         // Do Nothing
     }
 
+    const_iterator_pro(const const_iterator_pro<value_type>& another) {
+        this->data = another.get_data();
+        this->curr_pos = another.get_idx();
+        this->reverse_flag = another.get_reverse_flag();
+    }
+    
     const_iterator_pro(const iterator_pro<value_type>& another) {
         this->data = another.get_data();
         this->curr_pos = another.get_idx();
@@ -150,6 +162,10 @@ public:
 
     value_type** const get_data() const {
         return this->data;
+    }
+
+    bool get_reverse_flag() const {
+        return this->reverse_flag;
     }
     
     const_iterator_pro operator++() {
