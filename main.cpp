@@ -38,7 +38,6 @@ public:
 
 int main() {
     
-    /*
     auto classic_start = std::clock();
     vector<big_obj> test;
     auto build_time = std::clock();
@@ -54,12 +53,6 @@ int main() {
     auto classic_end_2 = std::clock();
     cout << "Ini time2:: " << build_time2 - classic_start_2 << endl;
     cout << "Time2 ::" << classic_end_2 - build_time2 << endl;
-    */
-
-    vector_pro<int> test = {3, 4, 7, 1, 2, 9};
-    test.sort();
-    cout << test << endl;
-    cout << test.find(5) << endl;
 
     return 0;
 }
