@@ -6,7 +6,7 @@ See [VectorPro](https://sunparis.github.io/VectorPro.site/)
 
 Clone the files to you project, add
 ```c++
-# include "vector_pro"
+# include "vector_pro.h"
 ```
 to your code, and at last don't forget to compile&run it.
 
