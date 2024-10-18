@@ -386,7 +386,7 @@ public:
         return *(this->_data[position]);
     }
 
-    value_type *data() const throw(...) {
+    value_type *data() const {
         throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybe in the near future ?)");
         return null;
     }
@@ -763,7 +763,7 @@ public:
     void destroy() noexcept {
         this->clear();
         this->curr_size = 0;
-        if (this->data != null) {
+        if (this->_data != null) {
             delete [] this->_data;
             this->_data = null;
         }
