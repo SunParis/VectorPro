@@ -20,7 +20,7 @@ public:
     }
     
     ~vector_pro_exception() override {
-        if (this->str)  delete [] this->str;
+        if (this->str != null)  delete [] this->str;
         this->str = null;
     }
     

@@ -99,7 +99,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -115,7 +115,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -136,7 +136,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -157,7 +157,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -188,7 +188,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -207,7 +207,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -223,7 +223,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -245,7 +245,7 @@ public:
         this->destroy();
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -273,13 +273,13 @@ public:
     
     void resize(const size_type re_size) {
         if (re_size < 0) {
-            throw vector_pro_exception("Resize val of vector should geq 0.");
+            throw vector_pro_exception("Re_size val of vector should geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
         value_type **tmp = new value_type*[re_size];
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         if (re_size < this->curr_size) {
@@ -299,13 +299,13 @@ public:
 
     void resize(const size_type re_size, const value_type& val) {
         if (re_size < 0) {
-            throw vector_pro_exception("Resize val of vector should geq 0.");
+            throw vector_pro_exception("Re_size val of vector should geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
         value_type **tmp = new value_type*[re_size];
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         if (re_size < this->curr_size) {
@@ -352,7 +352,7 @@ public:
         if (re_size < this->curr_size) return;
         value_type **tmp = new value_type*[re_size];
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         for (size_type idx = 0; idx < this->data_len; idx++) {
@@ -371,7 +371,7 @@ public:
     // Element access
 
     value_type& operator[](size_type position) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (position >= this->data_len) throw vector_pro_exception("Out of range.");
         if (position < 0) throw vector_pro_exception("Out of range.");
         
@@ -379,14 +379,14 @@ public:
     }
     
     value_type& at(const size_type position) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (position >= this->data_len) throw vector_pro_exception("Out of range.");
         if (position < 0) throw vector_pro_exception("Out of range.");
 
         return *(this->_data[position]);
     }
 
-    value_type *data() {
+    value_type *data() const throw(...) {
         throw vector_pro_exception("Vector_pro doesn't support this operation yet. (Maybe in the near future ?)");
         return null;
     }
@@ -404,7 +404,7 @@ public:
     // Modifiers
     
     void assign(size_type num, const value_type& val) {
-        if (num < 0)   throw vector_pro_exception("value_typehe first param (num) should geq 0.");
+        if (num < 0)   throw vector_pro_exception("Number of insert target should be geq 0.");
         for (size_type idx = 0; idx < num; idx++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = value_type(val);
@@ -463,7 +463,7 @@ public:
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing was done.");
+            throw vector_pro_exception("Out of memory.");
         }        
         this->_data[this->data_len] = tmp;
         this->data_len += 1;
@@ -494,7 +494,7 @@ public:
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
         }
 
         for (size_type i = this->data_len; i > position; i--) {
@@ -515,7 +515,7 @@ public:
         }
         value_type *tmp = new value_type(val);
         if (tmp == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
         }
 
         size_type idx = position.get_idx();
@@ -557,8 +557,8 @@ public:
     }
     
     iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
-        if (position.get_data() != this->_data)  throw vector_pro_exception("Position iterator not of this vector.");
-        if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Target iterator not of same vector.");
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Iterator not of same vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
 
@@ -589,7 +589,7 @@ public:
     }
 
     iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
-        if (position.get_data() != this->_data)  throw vector_pro_exception("Position iterator not of this vector.");
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
 
@@ -653,7 +653,7 @@ public:
     // Erase methods
     
     size_type erase(size_type position) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (position >= this->data_len) throw vector_pro_exception("Out of range.");
         if (position < 0) throw vector_pro_exception("Out of range.");
         
@@ -666,7 +666,7 @@ public:
     }
 
     size_type erase(size_type from, size_type exclude_to) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (from >= this->data_len || exclude_to > this->data_len) throw vector_pro_exception("Out of range.");
         if (from < 0 || exclude_to < 0) throw vector_pro_exception("Out of range.");
         if (from >= exclude_to) throw vector_pro_exception("Out of range.");
@@ -682,7 +682,7 @@ public:
     }
 
     iterator_pro<value_type> erase(const_iterator_pro<value_type> position) {        
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (position.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0) throw vector_pro_exception("Out of range.");
@@ -697,7 +697,7 @@ public:
     }
 
     iterator_pro<value_type> erase(const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (from.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
         if (exclude_to.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
         if (from.get_idx() >= this->data_len || exclude_to.get_idx() > this->data_len) throw vector_pro_exception("Out of range.");
@@ -717,7 +717,7 @@ public:
     }
         
     void swap(const size_type idx1, const size_type idx2) {
-        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
+        if (this->_data == null || this->data_len <= 0) throw vector_pro_exception("Out of range.");
         if (idx1 >= this->data_len || idx2 >= this->data_len) throw vector_pro_exception("Out of range.");
         if (idx1 < 0 || idx2 < 0) throw vector_pro_exception("Out of range.");
         if (idx1 == idx2)   return;
@@ -946,7 +946,7 @@ public:
         }
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -974,7 +974,7 @@ public:
         }
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
@@ -995,7 +995,7 @@ public:
         }
         this->_data = new value_type* [ini_size];
         if (this->_data == null) {
-            throw vector_pro_exception("Out of memory, nothing done.");
+            throw vector_pro_exception("Out of memory.");
             return;
         }
         this->curr_size = ini_size;
