@@ -421,6 +421,7 @@ public:
 
     void assign(iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) {
         size_type idx = 0;
+        if (from.get_data() != exclude_to.get_data())   throw vector_pro_exception("Iterator not of same vector.");
         for (auto iter = from; iter != exclude_to; iter++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = value_type(*iter);
@@ -505,7 +506,7 @@ public:
         return position;
     }
 
-    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const value_type& val) {
+    iterator_pro<value_type> insert(iterator_pro<value_type> position, const value_type& val) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
@@ -527,7 +528,29 @@ public:
         return iterator_pro(this->_data, idx);
     }
 
-    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, size_type num, const value_type& val) {
+    const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const value_type& val) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
+        
+        if (this->data_len == this->curr_size) {
+            this->resize(_DOUBLE_(this->curr_size));
+        }
+        value_type *tmp = new value_type(val);
+        if (tmp == null) {
+            throw vector_pro_exception("Out of memory.");
+        }
+
+        size_type idx = position.get_idx();
+        for (size_type i = this->data_len; i > idx; i--) {
+            this->_data[i] = this->_data[i - 1];
+        }
+        this->_data[idx] = tmp;
+        this->data_len += 1;
+        return const_iterator_pro(this->_data, idx);
+    }
+
+    iterator_pro<value_type> insert(iterator_pro<value_type> position, size_type num, const value_type& val) {
         if (num == 0)   return iterator_pro(position);
         if (num < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector."); 
@@ -555,8 +578,37 @@ public:
         this->data_len += n;
         return iterator_pro(this->_data, idx);
     }
+
+    const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, size_type num, const value_type& val) {
+        if (num == 0)   return const_iterator_pro(position);
+        if (num < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector."); 
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range");
+        
+        size_type n = num;
+        size_type idx = position.get_idx();
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
+        }
+
+        for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->_data[i] = this->_data[i - n];
+        }
+        
+        for (size_type curr = idx; curr < n; curr++) {
+            this->_data[curr + idx] = new value_type(val);
+            if (this->_data[curr + idx] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+        }        
+
+        this->data_len += n;
+        return const_iterator_pro(this->_data, idx);
+    }
     
-    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
+    iterator_pro<value_type> insert(iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Iterator not of same vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
@@ -588,7 +640,39 @@ public:
         return iterator_pro(this->_data, idx);
     }
 
-    iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
+    const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Iterator not of same vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
+
+        size_type n = exclude_to.get_idx() - from.get_idx();
+        size_type idx = position.get_idx();
+        if (n == 0)   return const_iterator_pro(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
+        }
+
+        for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->_data[i] = this->_data[i - n];
+        }
+        
+        size_type curr = idx;
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->_data[curr] = new value_type(*iter);
+            if (this->_data[curr] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+            curr++;
+        }        
+
+        this->data_len += n;
+        return const_iterator_pro(this->_data, idx);
+    }
+
+    iterator_pro<value_type> insert(iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
@@ -619,6 +703,37 @@ public:
         return iterator_pro(this->_data, idx);
     }
 
+    const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
+
+        size_type n = li.size();
+        size_type idx = position.get_idx();
+        if (n == 0)   return const_iterator_pro(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
+        }
+
+        for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->_data[i] = this->_data[i - n];
+        }
+        
+        size_type curr = idx;
+        for (auto iter = li.begin(); iter != li.end(); iter++) {
+            this->_data[curr] = new value_type(*iter);
+            if (this->_data[curr] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+            curr++;
+        }        
+
+        this->data_len += n;
+        return const_iterator_pro(this->_data, idx);
+    }
+
     size_type emplace(size_type position, const value_type& val) {
         if (position > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position < 0)    throw vector_pro_exception("Out of range.");
@@ -632,7 +747,21 @@ public:
         }
     }
 
-    iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& val) {
+    const_iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& val) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
+        if (position.get_idx() == this->data_len) {
+            this->push(val);
+            return (this->cend() - 1);
+        }
+        else {
+            this->insert(position.get_idx(), val);
+            return const_iterator_pro<value_type>(this->_data, position.get_idx());
+        }
+    }
+
+    iterator_pro<value_type> emplace(iterator_pro<value_type> position, const value_type& val) {
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
         if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
         if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
@@ -726,8 +855,9 @@ public:
         this->_data[idx2] = tmp;
     }
 
-    void swap(iterator_pro<value_type> idx1, iterator_pro<value_type> idx2) {
-        std::swap(*idx1, *idx2);
+    void swap(const_iterator_pro<value_type> idx1, const_iterator_pro<value_type> idx2) {
+        if (idx1.get_data() != this->_data || idx2.get_data() != this->_data)   throw vector_pro_exception("Iterator not of this vector.");
+        std::swap(this->_data[idx1.get_idx()], this->_data[idx2.get_idx()]);
     }
 
     void swap(vector_pro<value_type> &another) {
