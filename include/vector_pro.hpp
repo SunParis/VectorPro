@@ -36,6 +36,15 @@ protected:
     size_type data_len = 0;
     value_type **_data = null;
     
+    void destroy() noexcept {
+        this->clear();
+        this->curr_size = 0;
+        if (this->_data != null) {
+            delete [] this->_data;
+            this->_data = null;
+        }
+    }
+    
     void insertionSort(size_type left, size_type right, int(compare2)(const value_type &, const value_type &)) noexcept {
         value_type **arr = this->_data;
         for (size_type i = left + 1; i <= right; i++) {
@@ -890,15 +899,7 @@ public:
         this->data_len = 0;
     }
 
-    void destroy() noexcept {
-        this->clear();
-        this->curr_size = 0;
-        if (this->_data != null) {
-            delete [] this->_data;
-            this->_data = null;
-        }
-    }
-    
+        
     // Built-in find method
     
     size_type find(const value_type& target, int(compare2)(const value_type &, const value_type &), size_type from = 0, size_type exclude_to = -1) const {
