@@ -90,13 +90,17 @@ pop_back: clean
 	g++ ./samples/pop_back.cpp -o pop_back.out
 	./pop_back.out
 
-push: clean
-	g++ ./samples/push.cpp -o push.out
-	./push.out
+pop: clean
+	g++ ./samples/pop.cpp -o pop.out
+	./pop.out
 
 push_back: clean
 	g++ ./samples/push_back.cpp -o push_back.out
 	./push_back.out
+
+push: clean
+	g++ ./samples/push.cpp -o push.out
+	./push.out
 
 rbegin: clean
 	g++ ./samples/rbegin.cpp -o rbegin.out
@@ -121,6 +125,10 @@ shrink_to_fit: clean
 size: clean
 	g++ ./samples/size.cpp -o size.out
 	./size.out
+
+sort: clean
+	g++ ./samples/sort.cpp -o sort.out
+	./sort.out
 
 swap: clean
 	g++ ./samples/swap.cpp -o swap.out

@@ -36,7 +36,7 @@ protected:
     size_type data_len = 0;
     value_type **_data = null;
     
-    void insertionSort(size_type left, size_type right, int(compare2)(const value_type &, const value_type &)) {
+    void insertionSort(size_type left, size_type right, int(compare2)(const value_type &, const value_type &)) noexcept {
         value_type **arr = this->_data;
         for (size_type i = left + 1; i <= right; i++) {
             value_type *temp = arr[i];
@@ -49,7 +49,7 @@ protected:
         }
     }
 
-    void mergesort(size_type l, size_type m, size_type r, int(compare2)(const value_type &, const value_type &)) {
+    void mergesort(size_type l, size_type m, size_type r, int(compare2)(const value_type &, const value_type &)) noexcept {
         value_type **arr = this->_data;
         size_type len1 = m - l + 1, len2 = r - m;
         value_type **left = new value_type*[len1];
@@ -993,7 +993,7 @@ public:
     
     // Built-in tim sort
     
-    void sort(int(compare2)(const value_type &, const value_type &)) {
+    void sort(int(compare2)(const value_type &, const value_type &)) noexcept {
         if (this->_data == null || this->data_len <= 0) return;
         const int RUN = 32;
         size_type n = this->size();
@@ -1011,7 +1011,7 @@ public:
         }
     }
 
-    void sort() {
+    void sort() noexcept {
         if (this->_data == null || this->data_len <= 0) return;
         
         int (*compare2)(const value_type &, const value_type &) = [](const value_type & a, const value_type & b) -> int {
