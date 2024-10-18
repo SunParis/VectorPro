@@ -93,7 +93,7 @@ public:
     vector_pro() {
         size_type ini_size = VECTOR_PRO_DEFAULT_SIZE;
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -109,7 +109,7 @@ public:
     vector_pro(const std::vector<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -130,7 +130,7 @@ public:
     vector_pro(const std::initializer_list<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.size());
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -151,7 +151,7 @@ public:
     vector_pro(const vector_pro<value_type>& another) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -182,7 +182,7 @@ public:
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -201,7 +201,7 @@ public:
     vector_pro(const size_type len) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);;
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -217,7 +217,7 @@ public:
     vector_pro(const size_type len, const value_type& val) {
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -239,7 +239,7 @@ public:
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, input_len);
         
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->destroy();
@@ -273,7 +273,7 @@ public:
     
     void resize(const size_type re_size) {
         if (re_size < 0) {
-            throw vector_pro_exception("Re_size val of vector should geq 0.");
+            throw vector_pro_exception("Re_size val of vector should be geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
@@ -299,7 +299,7 @@ public:
 
     void resize(const size_type re_size, const value_type& val) {
         if (re_size < 0) {
-            throw vector_pro_exception("Re_size val of vector should geq 0.");
+            throw vector_pro_exception("Re_size val of vector should be geq 0.");
             return;
         }
         if (re_size == this->curr_size) return;
@@ -346,7 +346,7 @@ public:
     
     void reserve(const size_type re_size) {
         if (re_size < 0) {
-            throw vector_pro_exception("Re_size val of vector should geq 0.");
+            throw vector_pro_exception("Re_size val of vector should be geq 0.");
             return;
         }
         if (re_size < this->curr_size) return;
@@ -941,7 +941,7 @@ public:
         this->destroy();
         size_type ini_size = another.capacity();
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
@@ -969,7 +969,7 @@ public:
         this->destroy();
         size_type ini_size = another.capacity();
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
@@ -990,7 +990,7 @@ public:
         this->destroy();
         size_type ini_size = another.size();
         if (ini_size < 0) {
-            throw vector_pro_exception("Initial size of vector should geq 0.");
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
             return;
         }
         this->_data = new value_type* [ini_size];
