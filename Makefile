@@ -62,6 +62,10 @@ erase: clean
 	g++ ./samples/erase.cpp -o erase.out
 	./erase.out
 
+find: clean
+	g++ ./samples/find.cpp -o find.out
+	./find.out
+
 front: clean
 	g++ ./samples/front.cpp -o front.out
 	./front.out
