@@ -997,9 +997,9 @@ public:
     void sort(int(compare2)(const value_type &, const value_type &)) noexcept {
         if (this->_data == null || this->data_len <= 0) return;
         const int RUN = 32;
-        size_type n = this->size();
+        size_type n = this->data_len;
         for (size_type i = 0; i < n; i += RUN)
-            insertionSort(i, (i + 31 < n - 1) ? (i + 31) : (n - 1), compare2);
+            this->insertionSort(i, (i + 31 < n - 1) ? (i + 31) : (n - 1), compare2);
 
         for (size_type size = RUN; size < n; size = 2 * size) {
             for (size_type left = 0; left < n; left += 2 * size) {
@@ -1007,7 +1007,7 @@ public:
                 size_type right = (left + 2 * size - 1 < n - 1) ? (left + 2 * size - 1) : (n - 1);
 
                 if (mid < right)
-                    mergesort(left, mid, right, compare2);
+                    this->mergesort(left, mid, right, compare2);
             }
         }
     }
@@ -1022,9 +1022,9 @@ public:
         };
         
         const int RUN = 32;
-        size_type n = this->size();
+        size_type n = this->data_len;
         for (size_type i = 0; i < n; i += RUN)
-            insertionSort(i, (i + 31 < n - 1) ? (i + 31) : (n - 1), compare2);
+            this->insertionSort(i, (i + 31 < n - 1) ? (i + 31) : (n - 1), compare2);
 
         for (size_type size = RUN; size < n; size = 2 * size) {
             for (size_type left = 0; left < n; left += 2 * size) {
@@ -1032,7 +1032,7 @@ public:
                 size_type right = (left + 2 * size - 1 < n - 1) ? (left + 2 * size - 1) : (n - 1);
 
                 if (mid < right)
-                    mergesort(left, mid, right, compare2);
+                    this->mergesort(left, mid, right, compare2);
             }
         }
     }
