@@ -5,7 +5,7 @@
 /**
  * Output:
  * myvector is now:: [ 32, 72, 55, 46, 32, 12, 61, 84, 39, 97 ]
- * myvector2 is now:: [ 32, 72, 55, 46, 32, 12, 61, 84, 39, 97 ]
+ * myvector2 is now:: [ 100, 100, 100, 100, 100 ]
  * myvector after merging:: [ 32, 72, 55, 46, 32, 12, 61, 84, 39, 97, 100, 100, 100, 100, 100 ]
  * myvector2 after merging:: [ 100, 100, 100, 100, 100 ]
  */
@@ -17,7 +17,7 @@ int main ()
   vector_pro<int> myvector = { 32, 72, 55, 46, 32, 12, 61, 84, 39, 97 };
   vector_pro<int> myvector2(5, 100);
   std::cout << "myvector is now:: " << myvector << std::endl;
-  std::cout << "myvector2 is now:: " << myvector << std::endl;
+  std::cout << "myvector2 is now:: " << myvector2 << std::endl;
 
   // merge
   myvector.merge(myvector2);
