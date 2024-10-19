@@ -887,6 +887,7 @@ public:
     }
     
     void merge(const vector_pro<value_type> &another) {
+        this->reserve(this->data_len + another.size());
         for (auto iter = another.cbegin(); iter != another.cend(); iter++) {
             this->push(*iter);
         }
