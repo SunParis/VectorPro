@@ -875,7 +875,7 @@ public:
         std::swap(this->curr_size, another.curr_size);
     }
 
-    void reverse() {
+    void reverse() noexcept {
         size_type head = 0, last = this->data_len - 1;
         while (head < last) {
             value_type *tmp = this->_data[head];

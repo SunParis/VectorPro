@@ -126,6 +126,10 @@ resize: clean
 	g++ ./samples/resize.cpp -o resize.out
 	./resize.out
 
+reverse: clean
+	g++ ./samples/reverse.cpp -o reverse.out
+	./reverse.out
+
 shrink_to_fit: clean
 	g++ ./samples/shrink_to_fit.cpp -o shrink_to_fit.out
 	./shrink_to_fit.out
