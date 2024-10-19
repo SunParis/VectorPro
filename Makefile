@@ -90,6 +90,10 @@ operator_assign: clean
 	g++ ./samples/operator=.cpp -o operator=.out
 	./operator=.out
 
+ostream: clean
+	g++ ./samples/ostream.cpp -o ostream.out
+	./ostream.out
+
 pop_back: clean
 	g++ ./samples/pop_back.cpp -o pop_back.out
 	./pop_back.out

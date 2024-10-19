@@ -1057,7 +1057,7 @@ public:
         printf(" ]");
     }
 
-    friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) { 
+    friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) noexcept { 
         output << "[ ";
         for (auto citer = target.cbegin(); citer != target.cend(); citer++) {
             output << *citer;
