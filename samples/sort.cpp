@@ -11,7 +11,7 @@
 int main ()
 {
   
-  // push 10 elements into the container
+  // initialize the container with 10 elements
   vector_pro<int> myvector = { 32, 72, 55, 46, 32, 12, 61, 84, 39, 97 };
   std::cout << "myvector is now:: " << myvector << std::endl;
 

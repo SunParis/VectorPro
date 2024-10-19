@@ -78,6 +78,10 @@ max_size: clean
 	g++ ./samples/max_size.cpp -o max_size.out
 	./max_size.out
 
+merge: clean
+	g++ ./samples/merge.cpp -o merge.out
+	./merge.out
+
 not_empty: clean
 	g++ ./samples/not_empty.cpp -o not_empty.out
 	./not_empty.out
