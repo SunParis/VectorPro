@@ -2,6 +2,10 @@ main: clean
 	g++ main.cpp -o main.out
 	./main.out
 
+test1:
+	g++ ./tests/test1.cpp -o test1.out
+	./test1.out
+
 create: clean
 	g++ ./samples/create.cpp -o create.out
 	./create.out
