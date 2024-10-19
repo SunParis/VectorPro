@@ -106,6 +106,10 @@ pop: clean
 	g++ ./samples/pop.cpp -o pop.out
 	./pop.out
 
+print: clean
+	g++ ./samples/print.cpp -o print.out
+	./print.out
+
 push_back: clean
 	g++ ./samples/push_back.cpp -o push_back.out
 	./push_back.out

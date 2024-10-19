@@ -1040,25 +1040,27 @@ public:
     
     // Print methods
     
-    void print(void(print)(value_type&)) const {
+    void print(void(print)(const value_type&)) const {
         printf("[ ");
-        for (auto idx = 0; idx < this->data_len; idx++) {
-            print(*(this->_data[idx]));
-            if (idx < this->data_len - 1)    printf(", ");
+        for (auto citer = this->cbegin(); citer != this->cend(); citer++) {
+            print(*citer);
+            if (citer.get_idx() < this->data_len - 1)    std::cout << ", ";
         }
+        if (this->data_len == 0) std::cout << "null";
         printf(" ]");
     }
 
     void print() const {
         printf("[ ");
-        for (auto idx = 0; idx < this->data_len; idx++) {
-            std::cout << *(this->_data[idx]);
-            if (idx < this->data_len - 1)    printf(", ");
+        for (auto citer = this->cbegin(); citer != this->cend(); citer++) {
+            std::cout << *citer;
+            if (citer.get_idx() < this->data_len - 1)    std::cout << ", ";
         }
+        if (this->data_len == 0) std::cout << "null";
         printf(" ]");
     }
 
-    friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) noexcept { 
+    friend std::ostream& operator<<(std::ostream &output, const vector_pro<value_type>& target) { 
         output << "[ ";
         for (auto citer = target.cbegin(); citer != target.cend(); citer++) {
             output << *citer;
