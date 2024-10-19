@@ -78,6 +78,10 @@ max_size: clean
 	g++ ./samples/max_size.cpp -o max_size.out
 	./max_size.out
 
+not_empty: clean
+	g++ ./samples/not_empty.cpp -o not_empty.out
+	./not_empty.out
+
 operator[]: clean
 	g++ ./samples/operator[].cpp -o operator[].out
 	./operator[].out

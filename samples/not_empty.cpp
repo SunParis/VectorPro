@@ -1,4 +1,4 @@
-// vector_pro::empty/not_empty
+// vector_pro::not_empty
 #include <iostream>
 #include "../vector_pro.h"
 
@@ -14,7 +14,7 @@ int main ()
 
   for (int i=1;i<=10;i++) myvector.push_back(i);
 
-  while (!myvector.empty() && myvector.not_empty())
+  while (myvector.not_empty())
   {
      sum += myvector.back();
      myvector.pop_back();
