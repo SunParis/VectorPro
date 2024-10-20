@@ -3,7 +3,7 @@
                  `ooo/                   OS: Arch Linux x86_64 
                 `+oooo:                  Host: VivoBook_ASUSLaptop X409JP_X409JP 1.0 
                `+oooooo:                 Kernel: 6.11.3-arch1-1 
-               -+oooooo+:                Uptime: 3 hours, 36 mins 
+               -+oooooo+:                Uptime: 34 mins 
              `/:-:++oooo+:               Packages: 1759 (pacman) 
             `/++++/+++++++:              Shell: bash 5.2.37 
            `/++++++++++++++:             Resolution: 1920x1080 
@@ -11,10 +11,10 @@
          ./ooosssso++osssssso+`          WM: kwin 
         .oossssso-````/ossssss+`         Theme: Breeze-Dark [GTK2], Breeze [GTK3] 
        -osssssso.      :ssssssso.        Icons: Tela-dark [GTK2/3] 
-      :osssssss/        osssso+++.       Terminal: vscode 
-     /ossssssss/        +ssssooo/-       CPU: Intel i5-1035G1 (8) @ 3.600GHz 
-   `/ossssso+/:-        -:/+osssso+-     GPU: Intel Iris Plus Graphics G1 
-  `+sso+:-`                 `.-/+oso:    GPU: NVIDIA GeForce MX330 
- `++:.                           `-/+/   Memory: 4064MiB / 7749MiB 
- .`                                 `/
+      :osssssss/        osssso+++.       Terminal: konsole 
+     /ossssssss/        +ssssooo/-       Terminal Font: Monaspace Radon Wide ExtraLight 10 
+   `/ossssso+/:-        -:/+osssso+-     CPU: Intel i5-1035G1 (8) @ 3.600GHz 
+  `+sso+:-`                 `.-/+oso:    GPU: Intel Iris Plus Graphics G1 
+ `++:.                           `-/+/   GPU: NVIDIA GeForce MX330 
+ .`                                 `/   Memory: 4443MiB / 7749MiB 
 

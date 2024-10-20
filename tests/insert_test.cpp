@@ -1,3 +1,4 @@
+# define VECTOR_PRO_DEFAULT_SIZE 0
 # include "../vector_pro.h"
 # include "get_time.hpp"
 # include "test_object.hpp"
