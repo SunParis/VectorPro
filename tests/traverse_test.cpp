@@ -20,8 +20,7 @@ time_struct *traverse_test_1(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                small_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
@@ -33,8 +32,7 @@ time_struct *traverse_test_1(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                small_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -48,8 +46,7 @@ time_struct *traverse_test_1(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                small_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -61,8 +58,7 @@ time_struct *traverse_test_1(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                small_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
@@ -83,8 +79,7 @@ time_struct *traverse_test_2(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                big_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
@@ -96,8 +91,7 @@ time_struct *traverse_test_2(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                big_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -111,8 +105,7 @@ time_struct *traverse_test_2(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                big_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -124,8 +117,7 @@ time_struct *traverse_test_2(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                big_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
@@ -146,8 +138,7 @@ time_struct *traverse_test_3(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                large_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
@@ -159,8 +150,7 @@ time_struct *traverse_test_3(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                large_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -174,8 +164,7 @@ time_struct *traverse_test_3(size_t run, bool first_flag) {
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test2.begin(); iter != test2.end(); iter++) {
-                large_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[PRO].end = get_tick_count();
@@ -187,8 +176,7 @@ time_struct *traverse_test_3(size_t run, bool first_flag) {
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
             for (auto iter = test.begin(); iter != test.end(); iter++) {
-                large_object tmp;
-                *iter = tmp;
+                *iter;
             }
         }
         ret[CLASSIC].end = get_tick_count();
