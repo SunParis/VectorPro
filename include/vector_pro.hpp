@@ -4,7 +4,6 @@
 # include <iostream>
 # include <vector>
 # include <initializer_list>
-# include <type_traits>
 
 # ifndef ___SIZE_TYPE___
     # define ___SIZE_TYPE___ 1
