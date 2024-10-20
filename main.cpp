@@ -11,10 +11,6 @@ int main() {
 
     cout << myvector << endl;
 
-    vector_pro<int> test;
-    test.assign(10, 100);
-    vector_pro<int>test2(test.begin(), test.end());
-
     return 0;
 }
 
