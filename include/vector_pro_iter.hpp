@@ -20,12 +20,16 @@
 # ifndef _ITERATOR_PRO_
 # define _ITERATOR_PRO_ 1
 
+template <class value_type> class const_iterator_pro;
+
 template <class value_type>
 class iterator_pro {
 private:
+
     value_type **data = null;
     size_type curr_pos = 0;
     bool reverse_flag = 0;
+
 public:
     
     iterator_pro() {
@@ -46,10 +50,6 @@ public:
     
     size_type get_idx() const {
         return this->curr_pos;
-    }
-
-    value_type** const get_data() const {
-        return this->data;
     }
 
     bool get_reverse_flag() const {
@@ -125,14 +125,21 @@ public:
     value_type& operator*() {
         return *(this->data[curr_pos]);
     }
+
+    value_type** get_data() const {
+        return this->data;
+    }
+
 };
 
 template <class value_type>
 class const_iterator_pro {
 private:
-    value_type **data = null;
+
+    value_type **data;
     size_type curr_pos = 0;
     bool reverse_flag = 0;
+
 public:    
     const_iterator_pro() {
         // Do Nothing
@@ -158,10 +165,6 @@ public:
     
     size_type get_idx() const {
         return this->curr_pos;
-    }
-
-    value_type** const get_data() const {
-        return this->data;
     }
 
     bool get_reverse_flag() const {
@@ -236,6 +239,10 @@ public:
 
     const value_type& operator*() {
         return *(this->data[curr_pos]);
+    }
+
+    value_type** const get_data() const {
+        return this->data;
     }
 };
 

@@ -4,6 +4,7 @@
 # include <iostream>
 # include <vector>
 # include <initializer_list>
+# include <type_traits>
 
 # ifndef ___SIZE_TYPE___
     # define ___SIZE_TYPE___ 1
@@ -972,7 +973,7 @@ public:
             if (iter.get_idx() < 0) throw vector_pro_exception("Out of range.");
             if (iter.get_idx() >= this->data_len) throw vector_pro_exception("Out of range.");
             
-            if (*iter == target)   return iterator_pro<value_type>(this->_data, iter.get_idx());
+            if (*iter == target)    return iterator_pro<value_type>(this->_data, iter.get_idx());
         }
 
         return iterator_pro<value_type>(this->_data, exclude_to.get_idx());

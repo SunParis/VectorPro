@@ -40,7 +40,6 @@ plt.grid(True)
 plt.savefig("build_result.png", format='png')
 
 
-
 # 读入Excel文件
 file_path = 'insert_time_data.xlsx'  # 替换为你的文件路径
 df = pd.read_excel(file_path)
@@ -72,13 +71,12 @@ plt.legend(title='Element Size', ncol=2, loc='best')
 # plt.yscale('log')
 plt.legend()
 plt.title('Insert time')
-plt.xlabel('Number of Insertion')
+plt.xlabel('Number of Insertions')
 plt.ylabel('Time (ns)')
 
 # 显示图表
 plt.grid(True)
 plt.savefig("insert_result.png", format='png')
-
 
 # 读入Excel文件
 file_path = 'push_time_data.xlsx'  # 替换为你的文件路径
