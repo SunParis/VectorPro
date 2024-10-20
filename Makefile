@@ -2,6 +2,11 @@ main: clean
 	g++ main.cpp -o main.out
 	./main.out
 
+build_test: clean
+	g++ ./tests/build_test.cpp -o build_test.out
+	./build_test.out
+
+
 push_test: clean
 	g++ ./tests/push_test.cpp -o push_test.out
 	./push_test.out
