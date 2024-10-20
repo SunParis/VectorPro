@@ -2,9 +2,17 @@ main: clean
 	g++ main.cpp -o main.out
 	./main.out
 
-test1:
-	g++ ./tests/test1.cpp -o test1.out
-	./test1.out
+push_test: clean
+	g++ ./tests/push_test.cpp -o push_test.out
+	./push_test.out
+
+insert_test: clean
+	g++ ./tests/insert_test.cpp -o insert_test.out
+	./insert_test.out
+
+traverse_test: clean
+	g++ ./tests/traverse_test.cpp -o traverse_test.out
+	./traverse_test.out
 
 create: clean
 	g++ ./samples/create.cpp -o create.out

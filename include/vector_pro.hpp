@@ -41,8 +41,8 @@ protected:
         this->curr_size = 0;
         if (this->_data != null) {
             delete [] this->_data;
-            this->_data = null;
         }
+        this->_data = null;
     }
     
     void insertionSort(size_type left, size_type right, int(compare2)(const value_type &, const value_type &)) noexcept {
@@ -894,7 +894,7 @@ public:
     }
 
     void clear() noexcept {
-        for (size_type idx = 0; idx < this->data_len; idx++) {
+        for (size_type idx = 0; idx < this->data_len && this->_data != null; idx++) {
             delete this->_data[idx];
         }
         this->data_len = 0;
