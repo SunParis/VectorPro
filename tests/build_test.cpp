@@ -56,14 +56,14 @@ time_struct *build_test_2(size_t size, bool first_flag) {
     
     if (first_flag == true) {
         ret[CLASSIC].start = get_tick_count();
-        vector<big_object> test(size);
+        vector<medium_object> test(size);
         ret[CLASSIC].build = get_tick_count();
         // 
         ret[CLASSIC].end = get_tick_count();
         test.clear();
         
         ret[PRO].start = get_tick_count();
-        vector_pro<big_object> test2(size);
+        vector_pro<medium_object> test2(size);
         ret[PRO].build = get_tick_count();
         //
         ret[PRO].end = get_tick_count();
@@ -72,14 +72,14 @@ time_struct *build_test_2(size_t size, bool first_flag) {
     else {
         
         ret[PRO].start = get_tick_count();
-        vector_pro<big_object> test2(size);
+        vector_pro<medium_object> test2(size);
         ret[PRO].build = get_tick_count();
         //
         ret[PRO].end = get_tick_count();
         test2.clear();
         
         ret[CLASSIC].start = get_tick_count();
-        vector<big_object> test(size);
+        vector<medium_object> test(size);
         ret[CLASSIC].build = get_tick_count();
         //
         ret[CLASSIC].end = get_tick_count();

@@ -6,6 +6,9 @@ build_test: clean
 	g++ ./tests/build_test.cpp -o build_test.out
 	./build_test.out
 
+build_test_2: clean
+	g++ ./tests/build_test_2.cpp -o build_test_2.out
+	./build_test_2.out
 
 push_test: clean
 	g++ ./tests/push_test.cpp -o push_test.out

@@ -68,20 +68,20 @@ time_struct *push_test_2(size_t run, bool first_flag) {
     
     if (first_flag == true) {
         ret[CLASSIC].start = get_tick_count();
-        vector<big_object> test;
+        vector<medium_object> test;
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
-            big_object tmp;
+            medium_object tmp;
             test.push_back(tmp);
         }
         ret[CLASSIC].end = get_tick_count();
         test.clear();
         
         ret[PRO].start = get_tick_count();
-        vector_pro<big_object> test2;
+        vector_pro<medium_object> test2;
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
-            big_object tmp;
+            medium_object tmp;
             test2.push_back(tmp);
         }
         ret[PRO].end = get_tick_count();
@@ -90,20 +90,20 @@ time_struct *push_test_2(size_t run, bool first_flag) {
     else {
         
         ret[PRO].start = get_tick_count();
-        vector_pro<big_object> test2;
+        vector_pro<medium_object> test2;
         ret[PRO].build = get_tick_count();
         for (int i = 0; i < run; i++) {
-            big_object tmp;
+            medium_object tmp;
             test2.push_back(tmp);
         }
         ret[PRO].end = get_tick_count();
         test2.clear();
         
         ret[CLASSIC].start = get_tick_count();
-        vector<big_object> test;
+        vector<medium_object> test;
         ret[CLASSIC].build = get_tick_count();
         for (int i = 0; i < run; i++) {
-            big_object tmp;
+            medium_object tmp;
             test.push_back(tmp);
         }
         ret[CLASSIC].end = get_tick_count();

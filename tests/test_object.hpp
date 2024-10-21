@@ -10,43 +10,15 @@
 typedef unsigned char test_data_type;
 static test_data_type _data = 0;
 
-class test_object {
-public:
-    test_data_type *data = null;
-    unsigned int len = 0;
-    test_object(unsigned int N) {
-        this->len = N;
-        this->data = new test_data_type[N];
-        for (auto i = 0; i < N; i++) {
-            this->data[i] = _data;
-        }
-        _data++;
-    }
-    test_object(const test_object& tmp) {
-        this->data = new test_data_type[tmp.len];
-        this->len = tmp.len;
-        for (auto i = 0; i < tmp.len; i++) {
-            this->data[i] = tmp.data[0];
-        }
-        _data++;
-    }
-    ~test_object() {
-        if (this->data != null)
-            delete [] this->data;
-        this->data = null;
-        
-    }
-    friend std::ostream& operator<<(std::ostream &output, const test_object& target) { 
-        output << "# " << (int)target.data[0];
-        return output;            
-    }
-};
-
 class small_object {
 public:
     test_data_type data;
     small_object() {
         this->data = _data;
+        _data++;
+    }
+    small_object(test_data_type ddd) {
+        this->data = ddd;
         _data++;
     }
     small_object(const small_object& tmp) {
@@ -62,25 +34,31 @@ public:
     }
 };
 
-class big_object {
+class medium_object {
 public:
     test_data_type data[100];
-    big_object() {
+    medium_object() {
         for (auto i = 0; i < 100; i++) {
             this->data[i] = _data;
         }
         _data++;
     }
-    big_object(const big_object& tmp) {
+    medium_object(test_data_type ddd) {
+        for (auto i = 0; i < 100; i++) {
+            this->data[i] = ddd;
+        }
+        _data++;
+    }
+    medium_object(const medium_object& tmp) {
         for (auto i = 0; i < 100; i++) {
             this->data[i] = tmp.data[0];
         }
         _data++;
     }
-    ~big_object() {
+    ~medium_object() {
         //
     }
-    friend std::ostream& operator<<(std::ostream &output, const big_object& target) { 
+    friend std::ostream& operator<<(std::ostream &output, const medium_object& target) { 
         output << "# " << (int)target.data[0];
         return output;            
     }
@@ -92,6 +70,12 @@ public:
     large_object() {
         for (auto i = 0; i < 1000; i++) {
             this->data[i] = _data;
+        }
+        _data++;
+    }
+    large_object(test_data_type ddd) {
+        for (auto i = 0; i < 1000; i++) {
+            this->data[i] = ddd;
         }
         _data++;
     }
