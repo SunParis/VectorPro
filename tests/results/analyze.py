@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
 # 读入Excel文件
-file_path = 'build_time_data.xlsx'  # 替换为你的文件路径
+file_path = 'build_time_data.xlsx'
 df = pd.read_excel(file_path)
 
 # 获取数据
@@ -40,7 +40,7 @@ plt.grid(True)
 plt.savefig("build_result.png", format='png')
 
 # 读入Excel文件
-file_path = 'build_time_2_data.xlsx'  # 替换为你的文件路径
+file_path = 'build_time_2_data.xlsx'
 df = pd.read_excel(file_path)
 
 # 获取数据
@@ -78,7 +78,7 @@ plt.savefig("build_2_result.png", format='png')
 
 
 # 读入Excel文件
-file_path = 'insert_time_data.xlsx'  # 替换为你的文件路径
+file_path = 'insert_time_data.xlsx'
 df = pd.read_excel(file_path)
 
 # 获取数据
@@ -115,7 +115,7 @@ plt.grid(True)
 plt.savefig("insert_result.png", format='png')
 
 # 读入Excel文件
-file_path = 'push_time_data.xlsx'  # 替换为你的文件路径
+file_path = 'push_time_data.xlsx'
 df = pd.read_excel(file_path)
 
 # 获取数据
@@ -153,7 +153,7 @@ plt.savefig("push_result.png", format='png')
 
 
 # 读入Excel文件
-file_path = 'traverse_time_data.xlsx'  # 替换为你的文件路径
+file_path = 'traverse_time_data.xlsx'
 df = pd.read_excel(file_path)
 
 # 获取数据
