@@ -132,8 +132,8 @@ int main() {
     
     unsigned int TIMES = 20;
     time_struct *res;
-    fstream output_classic_build("./result/build_test_2_classic.txt", ofstream::out);
-    fstream output_pro_build("./result/build_test_2_pro.txt", ofstream::out);
+    fstream output_classic_build("./tests/results/build_test_2_classic.txt", ofstream::out);
+    fstream output_pro_build("./tests/results/build_test_2_pro.txt", ofstream::out);
     for (int run = 1; run < 2000; run += 100) {
         write_struct out[2];
         for (int times = 0; times < (TIMES / 2); times++) {

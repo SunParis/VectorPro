@@ -168,8 +168,8 @@ int main() {
     
     unsigned int TIMES = 20;
     time_struct *res;
-    fstream output_classic_run("./result/push_test_classic_run.txt", ofstream::out);
-    fstream output_pro_run("./result/push_test_pro_run.txt", ofstream::out);
+    fstream output_classic_run("./tests/results/push_test_classic_run.txt", ofstream::out);
+    fstream output_pro_run("./tests/results/push_test_pro_run.txt", ofstream::out);
     for (int run = 1; run < 2000; run += 100) {
         write_struct out[2];
         for (int times = 0; times < (TIMES / 2); times++) {
