@@ -1,6 +1,7 @@
 .vscode/
 # Prerequisites
 *.d
+*.sh
 tmp.*
 test
 
