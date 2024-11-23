@@ -13,7 +13,7 @@ int main ()
 
   int i=0;
 
-  iterator_pro<int> rit = myvector.rbegin();
+  vector_pro<int>::iterator rit = myvector.rbegin();
   for (; rit!= myvector.rend(); ++rit)
     *rit = ++i;
 

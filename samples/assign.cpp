@@ -17,7 +17,7 @@ int main ()
 
   first.assign (7,100);             // 7 ints with a value of 100
 
-  iterator_pro<int> it;
+  vector_pro<int>::iterator it;
   it=first.begin()+1;
 
   second.assign (it,first.end()-1); // the 5 central values of first

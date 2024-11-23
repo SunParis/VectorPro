@@ -10,7 +10,7 @@
 int main ()
 {
   vector_pro<int> myvector (3,100);
-  iterator_pro<int> it;
+  vector_pro<int>::iterator it;
 
   it = myvector.begin();
   it = myvector.insert ( it , 200 );

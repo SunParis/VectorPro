@@ -5,6 +5,7 @@
 # endif
 
 # include <cstdint>
+# include <type_traits>
 
 # ifndef ___SIZE_TYPE___
     # define ___SIZE_TYPE___ 1
@@ -33,16 +34,18 @@ private:
 public:
     
     iterator_pro() {
-        // Do Nothing
+        static_assert(!std::is_const<value_type>::value, "When the value_type is const, use const_iterator_pro instead.");
     }
     
     iterator_pro(const iterator_pro<value_type>& another) {
+        static_assert(!std::is_const<value_type>::value, "When the value_type is const, use const_iterator_pro instead.");
         this->data = another.get_data();
         this->curr_pos = another.get_idx();
         this->reverse_flag = another.get_reverse_flag();
     }
 
     iterator_pro(value_type **source, size_type idx = 0, bool reverse_flag = 0) {
+        static_assert(!std::is_const<value_type>::value, "When the value_type is const, use const_iterator_pro instead.");
         this->data = source;
         this->curr_pos = idx;
         this->reverse_flag = reverse_flag;
@@ -126,7 +129,7 @@ public:
         return *(this->data[curr_pos]);
     }
 
-    value_type** get_data() const {
+    value_type** const get_data() const {
         return this->data;
     }
 

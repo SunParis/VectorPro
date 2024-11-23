@@ -99,7 +99,11 @@ protected:
 
 public:
     
+    typedef iterator_pro<value_type> iterator;
+    typedef const_iterator_pro<value_type> const_iterator;
+
     vector_pro() {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = VECTOR_PRO_DEFAULT_SIZE;
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -116,6 +120,7 @@ public:
     }
             
     vector_pro(const std::vector<value_type>& another) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -137,6 +142,7 @@ public:
     }
 
     vector_pro(const std::initializer_list<value_type>& another) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.size());
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -158,6 +164,7 @@ public:
     }
 
     vector_pro(const vector_pro<value_type>& another) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, another.capacity());
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -180,6 +187,7 @@ public:
     }
 
     vector_pro(vector_pro<value_type>&& another) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         this->destroy();
         std::swap(this->_data, another._data);
         std::swap(this->data_len, another.data_len);
@@ -187,6 +195,7 @@ public:
     }
 
     vector_pro(const value_type *arr, const size_type len) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         if (arr == null)    throw vector_pro_exception("Target array can't be null.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         
@@ -208,6 +217,7 @@ public:
     }
 
     vector_pro(const size_type len) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);;
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -224,6 +234,7 @@ public:
     }
     
     vector_pro(const size_type len, const value_type& val) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, len);
         if (ini_size < 0) {
             throw vector_pro_exception("Initial size of vector should be geq 0.");
@@ -243,6 +254,7 @@ public:
     }
 
     vector_pro(const_iterator_pro<value_type>from, const_iterator_pro<value_type>exclude_to) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
         if (from.get_data() != exclude_to.get_data())  throw vector_pro_exception("Iterator not of same vector.");
         size_type input_len = std::max<size_type>(exclude_to.get_idx() - from.get_idx(), from.get_idx() - exclude_to.get_idx());
         size_type ini_size = std::max<size_type>(VECTOR_PRO_DEFAULT_SIZE, input_len);
@@ -263,6 +275,27 @@ public:
         for (auto iter = from; iter != exclude_to; iter++) {
             this->_data[idx] = new value_type(*iter);
             idx++;
+        }
+    }
+
+    vector_pro(typename std::vector<value_type>::const_iterator from, typename std::vector<value_type>::const_iterator exclude_to) {
+        static_assert(!std::is_const<value_type>::value, "value_type has not yet been supported as const.");
+        size_type ini_size = VECTOR_PRO_DEFAULT_SIZE;
+        
+        if (ini_size < 0) {
+            throw vector_pro_exception("Initial size of vector should be geq 0.");
+            return;
+        }
+        this->destroy();
+        this->_data = new value_type* [ini_size];
+        if (this->_data == null) {
+            throw vector_pro_exception("Out of memory.");
+            return;
+        }
+        this->curr_size = ini_size;
+        this->data_len = 0;
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->push_back(*iter);
         }
     }
     
@@ -428,9 +461,26 @@ public:
         this->data_len = num;
     }
 
-    void assign(iterator_pro<value_type> from, iterator_pro<value_type> exclude_to) {
+    void assign(const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
         size_type idx = 0;
         if (from.get_data() != exclude_to.get_data())   throw vector_pro_exception("Iterator not of same vector.");
+        for (auto iter = from; iter != exclude_to; iter++) {
+            if (idx < this->data_len) {
+                *this->_data[idx] = value_type(*iter);
+            }
+            else {
+                this->push(*iter);
+            }
+            idx++;
+        }
+        for (size_type _idx = idx; _idx < this->data_len; _idx++) {
+            delete this->_data[_idx];
+        }
+        this->data_len = idx;
+    }
+
+    void assign(typename std::vector<value_type>::const_iterator from, typename std::vector<value_type>::const_iterator exclude_to) {
+        size_type idx = 0;
         for (auto iter = from; iter != exclude_to; iter++) {
             if (idx < this->data_len) {
                 *this->_data[idx] = value_type(*iter);
@@ -488,7 +538,7 @@ public:
     value_type pop() {
         if (this->data_len <= 0) throw vector_pro_exception("Vector is empty.");
         value_type ret = value_type(*this->_data[this->data_len - 1]);
-        delete [] this->_data[this->data_len - 1];
+        delete this->_data[this->data_len - 1];
         this->data_len -= 1;
         return ret;
     }
@@ -534,7 +584,7 @@ public:
         }
         this->_data[idx] = tmp;
         this->data_len += 1;
-        return iterator_pro(this->_data, idx);
+        return iterator_pro<value_type>(position);
     }
 
     const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const value_type& val) {
@@ -556,11 +606,11 @@ public:
         }
         this->_data[idx] = tmp;
         this->data_len += 1;
-        return const_iterator_pro(this->_data, idx);
+        return const_iterator_pro<value_type>(position);
     }
 
     iterator_pro<value_type> insert(iterator_pro<value_type> position, size_type num, const value_type& val) {
-        if (num == 0)   return iterator_pro(position);
+        if (num == 0)   return iterator_pro<value_type>(position);
         if (num < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector."); 
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
@@ -585,11 +635,11 @@ public:
         }        
 
         this->data_len += n;
-        return iterator_pro(this->_data, idx);
+        return iterator_pro<value_type>(position);
     }
 
     const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, size_type num, const value_type& val) {
-        if (num == 0)   return const_iterator_pro(position);
+        if (num == 0)   return const_iterator_pro<value_type>(position);
         if (num < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
         if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector."); 
         if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range");
@@ -611,10 +661,10 @@ public:
             if (this->_data[curr + idx] == null) {
                 throw vector_pro_exception("Out of memory.");
             }
-        }        
+        }
 
         this->data_len += n;
-        return const_iterator_pro(this->_data, idx);
+        return const_iterator_pro<value_type>(position);
     }
     
     iterator_pro<value_type> insert(iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
@@ -625,7 +675,7 @@ public:
 
         size_type n = exclude_to.get_idx() - from.get_idx();
         size_type idx = position.get_idx();
-        if (n == 0)   return iterator_pro(position);
+        if (n == 0)   return iterator_pro<value_type>(position);
         if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
@@ -646,7 +696,7 @@ public:
         }        
 
         this->data_len += n;
-        return iterator_pro(this->_data, idx);
+        return iterator_pro<value_type>(position);
     }
 
     const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const_iterator_pro<value_type> from, const_iterator_pro<value_type> exclude_to) {
@@ -657,7 +707,43 @@ public:
 
         size_type n = exclude_to.get_idx() - from.get_idx();
         size_type idx = position.get_idx();
-        if (n == 0)   return const_iterator_pro(position);
+        if (n == 0)   return const_iterator_pro<value_type>(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n)); 
+        }
+
+        for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->_data[i] = this->_data[i - n];
+        }
+        
+        size_type curr = idx;
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->_data[curr] = new value_type(*iter);
+            if (this->_data[curr] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+            curr++;
+        }        
+
+        this->data_len += n;
+        return const_iterator_pro<value_type>(position);
+    }
+
+    iterator_pro<value_type> insert(iterator_pro<value_type> position, typename std::vector<value_type>::const_iterator from, typename std::vector<value_type>::const_iterator exclude_to) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
+
+        size_type n = 0;
+        auto tmp = from;
+        while (tmp != exclude_to) {
+            tmp++;
+            n++;
+        }
+        size_type idx = position.get_idx();
+        if (n == 0)   return iterator_pro<value_type>(position);
         if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
@@ -678,7 +764,43 @@ public:
         }        
 
         this->data_len += n;
-        return const_iterator_pro(this->_data, idx);
+        return iterator_pro<value_type>(position);
+    }
+
+    const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, typename std::vector<value_type>::const_iterator from, typename std::vector<value_type>::const_iterator exclude_to) {
+        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
+        if (position.get_idx() > this->data_len)  throw vector_pro_exception("Out of range.");
+        if (position.get_idx() < 0)  throw vector_pro_exception("Out of range.");
+
+        size_type n = 0;
+        auto tmp = from;
+        while (tmp != exclude_to) {
+            tmp++;
+            n++;
+        }
+        size_type idx = position.get_idx();
+        if (n == 0)   return const_iterator_pro<value_type>(position);
+        if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
+
+        if (this->data_len + n >= this->curr_size) {
+            this->resize(std::max<size_type>(_DOUBLE_(this->curr_size), this->data_len + n));
+        }
+
+        for (size_type i = this->data_len + n - 1; i >= idx + n; i--) {
+            this->_data[i] = this->_data[i - n];
+        }
+        
+        size_type curr = idx;
+        for (auto iter = from; iter != exclude_to; iter++) {
+            this->_data[curr] = new value_type(*iter);
+            if (this->_data[curr] == null) {
+                throw vector_pro_exception("Out of memory.");
+            }
+            curr++;
+        }        
+
+        this->data_len += n;
+        return const_iterator_pro<value_type>(position);
     }
 
     iterator_pro<value_type> insert(iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
@@ -688,7 +810,7 @@ public:
 
         size_type n = li.size();
         size_type idx = position.get_idx();
-        if (n == 0)   return iterator_pro(position);
+        if (n == 0)   return iterator_pro<value_type>(position);
         if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
@@ -709,7 +831,7 @@ public:
         }        
 
         this->data_len += n;
-        return iterator_pro(this->_data, idx);
+        return iterator_pro<value_type>(position);
     }
 
     const_iterator_pro<value_type> insert(const_iterator_pro<value_type> position, const std::initializer_list<value_type>& li) {
@@ -719,7 +841,7 @@ public:
 
         size_type n = li.size();
         size_type idx = position.get_idx();
-        if (n == 0)   return const_iterator_pro(position);
+        if (n == 0)   return const_iterator_pro<value_type>(position);
         if (n < 0)  throw vector_pro_exception("Number of insert target should be geq 0.");
 
         if (this->data_len + n >= this->curr_size) {
@@ -740,7 +862,7 @@ public:
         }        
 
         this->data_len += n;
-        return const_iterator_pro(this->_data, idx);
+        return const_iterator_pro<value_type>(position);
     }
 
     size_type emplace(size_type position, const value_type& val) {
@@ -757,31 +879,11 @@ public:
     }
 
     const_iterator_pro<value_type> emplace(const_iterator_pro<value_type> position, const value_type& val) {
-        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
-        if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
-        if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
-        if (position.get_idx() == this->data_len) {
-            this->push(val);
-            return (this->cend() - 1);
-        }
-        else {
-            this->insert(position.get_idx(), val);
-            return const_iterator_pro<value_type>(this->_data, position.get_idx());
-        }
+        return this->insert(position, val);
     }
 
     iterator_pro<value_type> emplace(iterator_pro<value_type> position, const value_type& val) {
-        if (position.get_data() != this->_data)  throw vector_pro_exception("Iterator not of this vector.");
-        if (position.get_idx() > this->data_len)    throw vector_pro_exception("Out of range.");
-        if (position.get_idx() < 0)    throw vector_pro_exception("Out of range.");
-        if (position.get_idx() == this->data_len) {
-            this->push(val);
-            return (this->end() - 1);
-        }
-        else {
-            this->insert(position.get_idx(), val);
-            return iterator_pro<value_type>(this->_data, position.get_idx());
-        }
+        return this->insert(position, val);
     }
 
     void emplace_back(const value_type& val) {
@@ -1144,18 +1246,22 @@ public:
     // Iterators
     
     iterator_pro<value_type> begin() noexcept {
+        static_assert(!std::is_const<value_type>::value, "when value_type is const use cbegin() instead.");
         return iterator_pro<value_type>(this->_data);
     }
 
     iterator_pro<value_type> end() noexcept {
+        static_assert(!std::is_const<value_type>::value, "when value_type is const use cend() instead.");
         return iterator_pro<value_type>(this->_data, this->data_len);
     }
 
     iterator_pro<value_type> rbegin() noexcept {
+        static_assert(!std::is_const<value_type>::value, "when value_type is const use crbegin() instead.");
         return iterator_pro<value_type>(this->_data, this->data_len - 1, true);
     }
 
     iterator_pro<value_type> rend() noexcept {
+        static_assert(!std::is_const<value_type>::value, "when value_type is const use crend() instead.");
         return iterator_pro<value_type>(this->_data, -1, true);
     }
 
